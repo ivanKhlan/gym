@@ -36,3 +36,7 @@
 - Maven
 
 ## Set-up
+`cd existing_repo`
+`git remote add origin https://gitlab.com/gvamburg/gym_backend_spring.git`
+`git branch -M main`
+`git push -uf origin main`
