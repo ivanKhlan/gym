@@ -1,0 +1,10 @@
+services:
+  postgres:
+    container_name: 'postgresql_gym'
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=gym'
+      - 'POSTGRES_PASSWORD=pass123'
+      - 'POSTGRES_USER=user'
+    ports:
+      - '5432'
