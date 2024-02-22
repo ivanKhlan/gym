@@ -1,32 +1,34 @@
 package ua.vixdev.gym.user.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.PropertySource;
 import ua.vixdev.gym.user.entity.UserEntity;
+import ua.vixdev.gym.user.mapper.ModelMapper;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@PropertySource("classpath:messages/api_user_error_messages.properties")
 public class CreateUserDto implements ModelMapper {
 
-    @NotNull(message = "{firstName.notNull}")
-    @Size(min = 2, max = 70, message = "{firstName.range}")
+    @NotBlank(message = "{user.firstName.notBlank}")
+    @Size(min = 2, max = 70, message = "{user.firstName.invalid}")
     private String firstName;
-    @NotNull(message = "{lastName.notNull}")
-    @Size(min = 2, max = 70, message = "{lastName.range}")
+    @NotBlank(message = "{user.lastName.notBlank}")
+    @Size(min = 2, max = 70, message = "{user.lastName.invalid}")
     private String lastName;
-    @Email
+    @Email(message = "{user.email.invalid}")
     private String email;
     @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$",
-            message = "{password.regex}")
+            message = "{user.password.invalid}")
     private String password;
-    private String phoneNumber;
 
+    @Pattern(regexp = "((\\+38)?\\(?\\d{3}\\)?[\\s\\.-]?(\\d{7}|\\d{3}[\\s\\.-]\\d{2}[\\s\\.-]\\d{2}|\\d{3}-\\d{4}))",
+    message = "{user.phoneNumber.invalid}")
+    private String phoneNumber;
     private Boolean visible;
 
     @Override

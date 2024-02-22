@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UpdateUserDto updateUserDto) {
+    ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserDto updateUserDto) {
         var user = userService.updateUser(id, updateUserDto);
         return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
     }

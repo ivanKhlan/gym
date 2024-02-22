@@ -1,4 +1,4 @@
-package ua.vixdev.gym.user.dto;
+package ua.vixdev.gym.user.mapper;
 
 import ua.vixdev.gym.user.entity.UserEntity;
 
