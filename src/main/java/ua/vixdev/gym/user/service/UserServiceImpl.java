@@ -1,6 +1,7 @@
 package ua.vixdev.gym.user.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.vixdev.gym.user.dto.CreateUserDto;
@@ -13,6 +14,7 @@ import ua.vixdev.gym.user.repository.UserEntityRepository;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -20,27 +22,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserEntity> findUsersByFirstNameAndLastName(String firstName, String lastName) {
-        return userRepository.findByFirstNameAndLastName(firstName, lastName);
+        return printLogInfo(userRepository.findByFirstNameAndLastName(firstName, lastName));
     }
 
     @Override
     public List<UserEntity> findUsersByVisible(Boolean visible) {
-        return userRepository.findByVisible(visible);
+        return printLogInfo(userRepository.findByVisible(visible));
     }
 
     @Override
     public List<UserEntity> findUsersByFirstName(String firstName) {
-        return userRepository.findByFirstName(firstName);
+        return printLogInfo(userRepository.findByFirstName(firstName));
     }
 
     @Override
     public List<UserEntity> findUsersByLastName(String lastName) {
-        return userRepository.findByLastName(lastName);
+        return printLogInfo(userRepository.findByLastName(lastName));
     }
 
     @Override
     public UserEntity findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        var loadUser = userRepository.findById(id);
+        log.info("Loaded user with ID: {}", id);
+
+        return loadUser.orElseThrow(() -> {
+            log.error("User with ID: {} not found!", id);
+            return new UserNotFoundException(id);
+        });
     }
 
     @Override
@@ -53,7 +61,9 @@ public class UserServiceImpl implements UserService {
     public UserEntity createNewUser(CreateUserDto user) {
         checkIfEmailAlreadyExists(user.getEmail());
         var userEntity = user.convertDtoToUserEntity();
-        return userRepository.save(userEntity);
+        UserEntity savedUser = userRepository.save(userEntity);
+        log.info("Saved user: {}", savedUser);
+        return savedUser;
     }
 
     @Transactional
@@ -61,16 +71,17 @@ public class UserServiceImpl implements UserService {
     public UserEntity updateUser(Long id, UpdateUserDto userDto) {
         var loadUser = findUserById(id);
         if (loadUser.equalsEmail(userDto.getEmail())) {
-            return loadUser.updateFields(userDto);
+            return updateUserFields(loadUser, userDto);
         }
         checkIfEmailAlreadyExists(userDto.getEmail());
-        return loadUser.updateFields(userDto);
+        return updateUserFields(loadUser, userDto);
     }
 
     @Override
     public void deleteUserById(Long id) {
         findUserById(id);
         userRepository.deleteById(id);
+        log.info("Deleted a user with ID: {}", id);
     }
 
     @Transactional
@@ -78,11 +89,24 @@ public class UserServiceImpl implements UserService {
     public void updateUserVisibility(Long id, String visible) {
         var user = findUserById(id);
         user.changeUserVisibility(visible);
+        log.info("For a user with ID {}, the visibility has been changed to: {}", id, visible);
+    }
+
+    private UserEntity updateUserFields(UserEntity loadUser, UpdateUserDto userDto) {
+        var updatedUser = loadUser.updateFields(userDto);
+        log.info("Updated user: {}", updatedUser);
+        return updatedUser;
     }
 
     private void checkIfEmailAlreadyExists(String email) {
         if (userRepository.findByEmailAddress(email).isPresent()) {
+            log.error("User with email: {} is already registered", email);
             throw new UserAlreadyExistsException(email);
         }
+    }
+
+    private List<UserEntity> printLogInfo(List<UserEntity> users) {
+        log.info("Size of loaded users from database: {}", users.size());
+        return users;
     }
 }

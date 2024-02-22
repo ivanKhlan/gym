@@ -2,6 +2,8 @@ package ua.vixdev.gym.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/users")
@@ -63,14 +66,14 @@ public class UserController {
                                            @RequestBody Map<String, String> body) {
 
         var visible = body.get("visible");
-        if (visible != null) {
+        if (StringUtils.isNotBlank(visible)
+                && (StringUtils.equalsIgnoreCase(visible, "true") ||
+                StringUtils.equalsIgnoreCase(visible, "false"))) {
             visible = visible.toLowerCase();
-            if (Boolean.toString(true).equals(visible) ||
-                    Boolean.toString(false).equals(visible)) {
-                userService.updateUserVisibility(id, visible);
-                return ResponseEntity.accepted().build();
-            }
+            userService.updateUserVisibility(id, visible);
+            return ResponseEntity.accepted().build();
         }
+        log.error("Incorrect data was provided when update the user's visibility: {}!", visible);
         throw new UserVisibleException(visible);
     }
 
