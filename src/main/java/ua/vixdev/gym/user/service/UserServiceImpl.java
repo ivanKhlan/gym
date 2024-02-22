@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    @Transactional
     @Override
     public UserEntity createNewUser(CreateUserDto user) {
         checkIfEmailAlreadyExists(user.getEmail());
@@ -72,11 +73,11 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public void updateUserVisibility(Long id, String visible) {
         var user = findUserById(id);
         user.changeUserVisibility(visible);
-        userRepository.save(user);
     }
 
     private void checkIfEmailAlreadyExists(String email) {
