@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * @author Volodymyr Holovetskyi
  * @version 1.0
- * @since 2023-11-22
+ * @since 2024-02-21
  */
 @ControllerAdvice
 public class ValidationHandlingController {

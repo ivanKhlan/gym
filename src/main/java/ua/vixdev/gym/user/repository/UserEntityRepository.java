@@ -9,6 +9,11 @@ import ua.vixdev.gym.user.entity.UserEntity;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-21
+ */
 @Repository
 public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
     @Query("select u from UserEntity u where u.email = ?1")

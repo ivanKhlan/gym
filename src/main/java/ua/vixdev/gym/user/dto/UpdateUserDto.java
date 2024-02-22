@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.mapper.ModelMapper;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-20
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

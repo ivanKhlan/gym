@@ -23,6 +23,11 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-22
+ */
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
     @Mock
@@ -66,7 +71,8 @@ class UserServiceTest {
 
         //when
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
-        UserNotFoundException userException = assertThrows(UserNotFoundException.class, () -> userService.deleteUserById(userEntity.getId()));
+        UserNotFoundException userException = assertThrows(UserNotFoundException.class, () ->
+                userService.deleteUserById(userEntity.getId()));
 
         //then
         assertTrue(userException.getMessage().contains("Could not find user with id {1}!"));
@@ -114,7 +120,8 @@ class UserServiceTest {
 
         //when
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
-        UserNotFoundException userException = assertThrows(UserNotFoundException.class, () -> userService.deleteUserById(userEntity.getId()));
+        UserNotFoundException userException = assertThrows(UserNotFoundException.class, () ->
+                userService.deleteUserById(userEntity.getId()));
 
         //then
         assertTrue(userException.getMessage().contains("Could not find user with id {1}!"));
@@ -140,7 +147,8 @@ class UserServiceTest {
 
         //when
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
-        UserNotFoundException userException = assertThrows(UserNotFoundException.class, () -> userService.deleteUserById(userEntity.getId()));
+        UserNotFoundException userException = assertThrows(UserNotFoundException.class, () ->
+                userService.deleteUserById(userEntity.getId()));
 
         //then
         assertTrue(userException.getMessage().contains("Could not find user with id {1}!"));

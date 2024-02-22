@@ -12,7 +12,11 @@ import ua.vixdev.gym.user.dto.UpdateUserDto;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-20
+ */
 @Entity
 @Data
 @Table(name = "users", schema = "public", catalog = "gym")

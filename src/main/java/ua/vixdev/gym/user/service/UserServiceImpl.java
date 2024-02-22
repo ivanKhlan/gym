@@ -13,6 +13,11 @@ import ua.vixdev.gym.user.repository.UserEntityRepository;
 
 import java.util.List;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-22
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -53,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserEntity> findAllUsers() {
-        return userRepository.findAll();
+       return printLogInfo(userRepository.findAll());
     }
 
     @Transactional
@@ -62,7 +67,7 @@ public class UserServiceImpl implements UserService {
         checkIfEmailAlreadyExists(user.getEmail());
         var userEntity = user.convertDtoToUserEntity();
         UserEntity savedUser = userRepository.save(userEntity);
-        log.info("Saved user: {}", savedUser);
+        log.info("Saved user with ID: {}", savedUser.getId());
         return savedUser;
     }
 
@@ -81,7 +86,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUserById(Long id) {
         findUserById(id);
         userRepository.deleteById(id);
-        log.info("Deleted a user with ID: {}", id);
+        log.info("Deleted user with ID: {}", id);
     }
 
     @Transactional
@@ -89,12 +94,12 @@ public class UserServiceImpl implements UserService {
     public void updateUserVisibility(Long id, String visible) {
         var user = findUserById(id);
         user.changeUserVisibility(visible);
-        log.info("For a user with ID {}, the visibility has been changed to: {}", id, visible);
+        log.info("Update user visibility for user with ID {} to: {}", id, visible);
     }
 
     private UserEntity updateUserFields(UserEntity loadUser, UpdateUserDto userDto) {
         var updatedUser = loadUser.updateFields(userDto);
-        log.info("Updated user: {}", updatedUser);
+        log.info("Updated user with ID: {}", updatedUser.getId());
         return updatedUser;
     }
 

@@ -4,11 +4,13 @@ import ua.vixdev.gym.user.entity.UserEntity;
 
 import java.util.List;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-22
+ */
 public abstract class UserEntityData {
 
-    public static UserEntity getEmptyUserEntity() {
-        return new UserEntity();
-    }
     public static UserEntity getSingleUserEntity() {
         return new UserEntity(
                 "Volodymyr",

@@ -3,12 +3,14 @@ package ua.vixdev.gym.user.base;
 import ua.vixdev.gym.user.dto.CreateUserDto;
 import ua.vixdev.gym.user.dto.UpdateUserDto;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-22
+ */
 public abstract class UserDataDto {
 
 
-    public static CreateUserDto getEmptyCreateUserDto() {
-        return new CreateUserDto();
-    }
     public static CreateUserDto getSingleUserDto() {
         return new CreateUserDto(
                 "Volodymyr",

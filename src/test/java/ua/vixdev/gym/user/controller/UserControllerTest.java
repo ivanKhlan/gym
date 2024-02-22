@@ -19,6 +19,11 @@ import ua.vixdev.gym.user.service.UserService;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-22
+ */
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(UserController.class)
 class UserControllerTest {
