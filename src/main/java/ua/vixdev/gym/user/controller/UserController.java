@@ -4,6 +4,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +41,8 @@ public class UserController {
      */
     @ResponseStatus(HttpStatus.OK)
     @GetMapping()
-    List<UserEntity> getAllUsers(
+    @Cacheable("users")
+    public List<UserEntity> getAllUsers(
             @RequestParam Optional<String> firstName,
             @RequestParam Optional<String> lastName,
             @RequestParam Optional<Boolean> visible) {
@@ -61,8 +65,9 @@ public class UserController {
      * @return User Returns the specified user by ID with status 200(OK).
      */
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable("userDetail")
     @GetMapping("/{id}")
-    UserEntity findUserById(@PathVariable Long id) {
+    public UserEntity findUserById(@PathVariable Long id) {
         return userService.findUserById(id);
     }
 
@@ -71,6 +76,10 @@ public class UserController {
      * @param createUser This parameter represents a new user.
      * @return Returns a new user along with the user's location with status 201(CREATED).
      */
+
+    @Caching(evict = {
+            @CacheEvict(value="users", allEntries=true),
+            @CacheEvict(value="userDetail", allEntries=true)})
     @PostMapping()
     ResponseEntity<?> createUser(@RequestBody @Valid CreateUserDto createUser) {
         var user = userService.createNewUser(createUser);
@@ -83,6 +92,10 @@ public class UserController {
      * @param updateUser This parameter represents the updated user.
      * @return Returns the updated user with status 202(ACCEPTED).
      */
+
+    @Caching(evict = {
+            @CacheEvict(value="users", allEntries=true),
+            @CacheEvict(value="userDetail", allEntries=true)})
     @PutMapping("/{id}")
     ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserDto updateUser) {
         var user = userService.updateUser(id, updateUser);
@@ -95,6 +108,10 @@ public class UserController {
      * @param body This parameter represents the updated user's visibility.
      * @return Returns the updated user with status 202(ACCEPTED).
      */
+
+    @Caching(evict = {
+            @CacheEvict(value="users", allEntries=true),
+            @CacheEvict(value="userDetail", allEntries=true)})
     @PatchMapping("/{id}/visible")
     ResponseEntity<?> updateUserVisibility(@PathVariable Long id,
                                            @RequestBody Map<String, String> body) {
@@ -116,9 +133,25 @@ public class UserController {
      * @param id This is a parameter for the search criteria by ID.
      * @return Returns a status of 204(NO_CONTENT).
      */
+    @Caching(evict = {
+            @CacheEvict(value="users", allEntries=true),
+            @CacheEvict(value="userDetail", allEntries=true)})
     @DeleteMapping("/{id}")
     ResponseEntity<?> deleteUser(@PathVariable Long id) {
         userService.deleteUserById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    /**
+     * This method is used to clear cache.
+     * @return Returns a status 200(OK).
+     */
+    @Caching(evict = {
+            @CacheEvict(value="users", allEntries=true),
+            @CacheEvict(value="userDetail", allEntries=true)})
+    @GetMapping("/clearCache")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<?> clearUsersCache() {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
