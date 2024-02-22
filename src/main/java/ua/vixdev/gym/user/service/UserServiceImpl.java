@@ -2,6 +2,7 @@ package ua.vixdev.gym.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.vixdev.gym.user.dto.CreateUserDto;
 import ua.vixdev.gym.user.dto.UpdateUserDto;
 import ua.vixdev.gym.user.entity.UserEntity;
@@ -49,18 +50,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity createNewUser(CreateUserDto user) {
-        if (userRepository.findByEmailAddress(user.getEmail()).isPresent()) {
-            throw new UserAlreadyExistsException(user.getEmail());
-        }
+        checkIfEmailAlreadyExists(user.getEmail());
         var userEntity = user.convertDtoToUserEntity();
         return userRepository.save(userEntity);
     }
 
+    @Transactional
     @Override
-    public UserEntity updateUser(Long id, UpdateUserDto updateUserDto) {
-        var userDB = findUserById(id);
-        var userEntity = userDB.updateFields(updateUserDto);
-        return userRepository.save(userEntity);
+    public UserEntity updateUser(Long id, UpdateUserDto userDto) {
+        var loadUser = findUserById(id);
+        if (loadUser.equalsEmail(userDto.getEmail())) {
+            return loadUser.updateFields(userDto);
+        }
+        checkIfEmailAlreadyExists(userDto.getEmail());
+        return loadUser.updateFields(userDto);
     }
 
     @Override
@@ -74,5 +77,11 @@ public class UserServiceImpl implements UserService {
         var user = findUserById(id);
         user.changeUserVisibility(visible);
         userRepository.save(user);
+    }
+
+    private void checkIfEmailAlreadyExists(String email) {
+        if (userRepository.findByEmailAddress(email).isPresent()) {
+            throw new UserAlreadyExistsException(email);
+        }
     }
 }

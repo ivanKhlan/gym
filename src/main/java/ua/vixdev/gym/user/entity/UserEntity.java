@@ -92,5 +92,9 @@ public class UserEntity {
     public void changeUserVisibility(String visible) {
         this.visible = Boolean.valueOf(visible);
     }
+
+    public boolean equalsEmail(String anotherEmail) {
+        return this.email.equals(anotherEmail);
+    }
 }
 
