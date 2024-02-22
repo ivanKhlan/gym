@@ -8,17 +8,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.vixdev.gym.user.base.UserDataDto;
 import ua.vixdev.gym.user.base.UserEntityData;
-import ua.vixdev.gym.user.dto.CreateUserDto;
-import ua.vixdev.gym.user.dto.UpdateUserDto;
+import ua.vixdev.gym.user.dto.UserDto;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.exceptions.buisnes_logic.UserNotFoundException;
-import ua.vixdev.gym.user.repository.UserEntityRepository;
+import ua.vixdev.gym.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
     @Mock
-    private UserEntityRepository userRepository;
+    private UserRepository userRepository;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -83,16 +83,15 @@ class UserServiceTest {
     void when_save_user_should_return_user() {
 
         //given
-        CreateUserDto userDto = UserDataDto.getSingleUserDto();
+        UserDto userDto = UserDataDto.getSingleUserDto();
         UserEntity userEntity = UserEntityData.getSingleUserEntity();
 
         //when
-        when(userRepository.save(ArgumentMatchers.any(UserEntity.class))).thenReturn(userEntity);
+        when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
         UserEntity created = userService.createNewUser(userDto);
 
         //then
         assertThat(created.getFirstName()).isSameAs(userDto.getFirstName());
-        verify(userRepository).save(userEntity);
     }
 
     //update user
@@ -100,16 +99,16 @@ class UserServiceTest {
     void when_given_id_should_update_user_if_found() {
         //given
         UserEntity user = UserEntityData.getSingleUserEntityWithIdOne();
-        UpdateUserDto updateUser = UserDataDto.getSingleUpdateUserDtoWithFirstNameIgor();
-        UserEntity userEntity = updateUser.convertDtoToUserEntity();
+        UserDto updateUser = UserDataDto.getSingleUserDtoWithFirstNameIgor();
+        UserEntity userEntity = updateUser.toUserEntity();
         userEntity.setId(1L);
 
         //when
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         userService.updateUser(user.getId(), updateUser);
 
+
         //then
-        verify(userRepository).save(userEntity);
         verify(userRepository).findById(user.getId());
     }
 

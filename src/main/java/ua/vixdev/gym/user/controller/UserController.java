@@ -10,8 +10,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.vixdev.gym.user.dto.CreateUserDto;
-import ua.vixdev.gym.user.dto.UpdateUserDto;
+import ua.vixdev.gym.user.dto.UserDto;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.exceptions.buisnes_logic.UserVisibleException;
 import ua.vixdev.gym.user.service.UserService;
@@ -73,7 +72,7 @@ public class UserController {
 
     /**
      * This method is used to create a new user.
-     * @param createUser This parameter represents a new user.
+     * @param userDto This parameter represents a new user.
      * @return Returns a new user along with the user's location with status 201(CREATED).
      */
 
@@ -81,15 +80,15 @@ public class UserController {
             @CacheEvict(value="users", allEntries=true),
             @CacheEvict(value="userDetail", allEntries=true)})
     @PostMapping()
-    ResponseEntity<?> createUser(@RequestBody @Valid CreateUserDto createUser) {
-        var user = userService.createNewUser(createUser);
+    ResponseEntity<?> createUser(@RequestBody @Valid UserDto userDto) {
+        var user = userService.createNewUser(userDto);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     /**
      * This method is used to update a user.
      * @param id This is a parameter for the search criteria by ID.
-     * @param updateUser This parameter represents the updated user.
+     * @param userDto This parameter represents the updated user.
      * @return Returns the updated user with status 202(ACCEPTED).
      */
 
@@ -97,8 +96,8 @@ public class UserController {
             @CacheEvict(value="users", allEntries=true),
             @CacheEvict(value="userDetail", allEntries=true)})
     @PutMapping("/{id}")
-    ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserDto updateUser) {
-        var user = userService.updateUser(id, updateUser);
+    ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid UserDto userDto) {
+        var user = userService.updateUser(id, userDto);
         return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
     }
 

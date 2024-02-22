@@ -4,12 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.vixdev.gym.user.dto.CreateUserDto;
-import ua.vixdev.gym.user.dto.UpdateUserDto;
+import ua.vixdev.gym.user.dto.UserDto;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.exceptions.buisnes_logic.UserAlreadyExistsException;
 import ua.vixdev.gym.user.exceptions.buisnes_logic.UserNotFoundException;
-import ua.vixdev.gym.user.repository.UserEntityRepository;
+import ua.vixdev.gym.user.repository.UserRepository;
 
 import java.util.List;
 
@@ -23,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserEntityRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<UserEntity> findUsersByFirstNameAndLastName(String firstName, String lastName) {
@@ -63,9 +62,9 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserEntity createNewUser(CreateUserDto user) {
+    public UserEntity createNewUser(UserDto user) {
         checkIfEmailAlreadyExists(user.getEmail());
-        var userEntity = user.convertDtoToUserEntity();
+        var userEntity = user.toUserEntity();
         UserEntity savedUser = userRepository.save(userEntity);
         log.info("Saved user with ID: {}", savedUser.getId());
         return savedUser;
@@ -73,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserEntity updateUser(Long id, UpdateUserDto userDto) {
+    public UserEntity updateUser(Long id, UserDto userDto) {
         var loadUser = findUserById(id);
         if (loadUser.equalsEmail(userDto.getEmail())) {
             return updateUserFields(loadUser, userDto);
@@ -97,7 +96,7 @@ public class UserServiceImpl implements UserService {
         log.info("Update user visibility for user with ID {} to: {}", id, visible);
     }
 
-    private UserEntity updateUserFields(UserEntity loadUser, UpdateUserDto userDto) {
+    private UserEntity updateUserFields(UserEntity loadUser, UserDto userDto) {
         var updatedUser = loadUser.updateFields(userDto);
         log.info("Updated user with ID: {}", updatedUser.getId());
         return updatedUser;

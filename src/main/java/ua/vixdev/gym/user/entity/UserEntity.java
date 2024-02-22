@@ -8,10 +8,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import ua.vixdev.gym.user.dto.UpdateUserDto;
+import ua.vixdev.gym.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+
 /**
  * @author Volodymyr Holovetskyi
  * @version 1.0
@@ -66,7 +67,7 @@ public class UserEntity {
         this.visible = Optional.ofNullable(visible).orElse(true);
     }
 
-    public UserEntity updateFields(UpdateUserDto userDto) {
+    public UserEntity updateFields(UserDto userDto) {
         if (userDto.getFirstName() != null) {
             firstName = userDto.getFirstName();
         }

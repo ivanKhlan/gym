@@ -12,8 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.vixdev.gym.user.base.UserDataDto;
-import ua.vixdev.gym.user.dto.CreateUserDto;
-import ua.vixdev.gym.user.dto.UpdateUserDto;
+import ua.vixdev.gym.user.dto.UserDto;
 import ua.vixdev.gym.user.service.UserService;
 
 import java.util.HashMap;
@@ -30,14 +29,12 @@ class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private UserService userService;
-
     @Test
     void find_all_users_by_first_name_and_last_name() throws Exception {
         //given
-        CreateUserDto user = UserDataDto.getSingleUserDto();
+        UserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -53,7 +50,7 @@ class UserControllerTest {
     @Test
     void find_all_users_by_first_name() throws Exception {
         //given
-        CreateUserDto user = UserDataDto.getSingleUserDto();
+        UserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -68,7 +65,7 @@ class UserControllerTest {
     @Test
     void find_all_users_by_last_name() throws Exception {
         //given
-        CreateUserDto user = UserDataDto.getSingleUserDto();
+        UserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -83,7 +80,7 @@ class UserControllerTest {
     @Test
     void find_all_users_by_visible() throws Exception {
         //given
-        CreateUserDto user = UserDataDto.getSingleUserDto();
+        UserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -98,7 +95,7 @@ class UserControllerTest {
     @Test
     void find_all_users_by_invisible() throws Exception {
         //given
-        CreateUserDto user = UserDataDto.getSingleUserDto();
+        UserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -113,7 +110,7 @@ class UserControllerTest {
     @Test
     void find_all_users_and_return_status_ok() throws Exception {
         //given
-        CreateUserDto user = UserDataDto.getSingleUserDto();
+        UserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -127,7 +124,7 @@ class UserControllerTest {
     @Test
     void create_user_and_return_status_created() throws Exception {
         //given
-        CreateUserDto user = UserDataDto.getSingleUserDto();
+        UserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -141,7 +138,7 @@ class UserControllerTest {
     @Test
     void update_user_and_return_status_accepted() throws Exception {
         //given
-        UpdateUserDto user = UserDataDto.getSingleUpdateUserDtoWithFirstNameIgor();
+        UserDto user = UserDataDto.getSingleUserDtoWithFirstNameIgor();
 
         //when
         //then
@@ -161,7 +158,7 @@ class UserControllerTest {
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("http://localhost:8080/users/1")
+                        .patch("http://localhost:8080/users/1/visible")
                         .content(toJsonString(body))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isAccepted());
@@ -185,7 +182,7 @@ class UserControllerTest {
     @Test
     void deleted_user_and_return_status_no_content() throws Exception {
         //given
-        UpdateUserDto user = UserDataDto.getSingleUpdateUserDtoWithFirstNameIgor();
+        UserDto user = UserDataDto.getSingleUserDtoWithFirstNameIgor();
 
         //when
         //then

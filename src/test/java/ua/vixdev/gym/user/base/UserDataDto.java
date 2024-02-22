@@ -1,7 +1,6 @@
 package ua.vixdev.gym.user.base;
 
-import ua.vixdev.gym.user.dto.CreateUserDto;
-import ua.vixdev.gym.user.dto.UpdateUserDto;
+import ua.vixdev.gym.user.dto.UserDto;
 
 /**
  * @author Volodymyr Holovetskyi
@@ -11,24 +10,24 @@ import ua.vixdev.gym.user.dto.UpdateUserDto;
 public abstract class UserDataDto {
 
 
-    public static CreateUserDto getSingleUserDto() {
-        return new CreateUserDto(
+    public static UserDto getSingleUserDto() {
+        return new UserDto(
                 "Volodymyr",
                 "Holovetskyi",
                 "vholvetskyi@gmail.com",
                 "passW00r-D$4d",
-                "+3809846432",
+                "+380984643287",
                 true
         );
     }
 
-    public static UpdateUserDto getSingleUpdateUserDtoWithFirstNameIgor() {
-        return new UpdateUserDto(
+    public static UserDto getSingleUserDtoWithFirstNameIgor() {
+        return new UserDto(
                 "Igor",
                 "Holovetskyi",
                 "vholvetskyi@gmail.com",
-                "pass",
-                "+3809846432",
+                "passwo_rD-877",
+                "+380984643278",
                 true
         );
     }

@@ -15,7 +15,7 @@ import java.util.Optional;
  * @since 2024-02-21
  */
 @Repository
-public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("select u from UserEntity u where u.email = ?1")
     Optional<UserEntity> findByEmailAddress(String email);
 
@@ -45,4 +45,6 @@ public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
                     " WHERE " +
                     " u.visible = ?1")
     List<UserEntity> findByVisible(@Param("visible") Boolean visible);
+
+    UserEntity save(UserEntity entity);
 }
