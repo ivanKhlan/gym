@@ -1,19 +1,33 @@
 package ua.vixdev.gym.security.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequiredArgsConstructor
-public class LoginController {
+import java.util.Date;
 
+@RestController
+public class LoginController {
     private final AuthenticationManager authenticationManager;
+
+    private long expirationTime;
+    private String secret;
+
+    public LoginController(AuthenticationManager authenticationManager,
+                           @Value("${jwt.expirationTime}") long expirationTime,
+                           @Value("${jwt.secret}") String secret) {
+        this.authenticationManager = authenticationManager;
+        this.secret = secret;
+    }
 
     @PostMapping("/login")
     public String login(@RequestBody LoginCredentials loginCredentials) {
@@ -21,7 +35,13 @@ public class LoginController {
                 new UsernamePasswordAuthenticationToken(loginCredentials.getUsername(), loginCredentials.password)
         );
 
-        return String.valueOf(authenticate.isAuthenticated());
+        UserDetails principal = (UserDetails) authenticate.getPrincipal();
+        String token = JWT.create()
+                .withSubject(principal.getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
+                .sign(Algorithm.HMAC256(secret));
+
+        return token;
     }
 
     @Getter
