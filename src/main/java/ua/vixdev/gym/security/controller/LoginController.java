@@ -2,6 +2,7 @@ package ua.vixdev.gym.security.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,10 +28,11 @@ public class LoginController {
                            @Value("${jwt.secret}") String secret) {
         this.authenticationManager = authenticationManager;
         this.secret = secret;
+        this.expirationTime = expirationTime;
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginCredentials loginCredentials) {
+    public Token login(@RequestBody LoginCredentials loginCredentials) {
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginCredentials.getUsername(), loginCredentials.password)
         );
@@ -41,13 +43,19 @@ public class LoginController {
                 .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
                 .sign(Algorithm.HMAC256(secret));
 
-        return token;
+        return new Token(token);
     }
 
     @Getter
     private static class LoginCredentials {
         private String username;
         private String password;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    private static class Token {
+        private String token;
     }
 
 }
