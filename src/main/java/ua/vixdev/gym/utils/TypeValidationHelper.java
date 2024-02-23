@@ -23,7 +23,7 @@ public class TypeValidationHelper {
         }
     }
 
-    public void validateCreateValue(RequestTypeDto requestTypeDto, TypeEntity typeEntity) {
+    public void validateCreatedAtValue(RequestTypeDto requestTypeDto, TypeEntity typeEntity) {
         if (requestTypeDto.getCreatedAt() == null) {
             requestTypeDto.setCreatedAt(typeEntity.getCreatedAt());
         }

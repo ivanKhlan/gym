@@ -101,7 +101,7 @@ public class TypeController {
 
         validationHelper.checkExistenceTypeEntity(typeEntity, id);
         validationHelper.checkTypeValueLength(requestTypeDto);
-        validationHelper.validateCreateValue(requestTypeDto, typeEntity.get());
+        validationHelper.validateCreatedAtValue(requestTypeDto, typeEntity.get());
 
         TypeEntity foundTypeEntity = new TypeEntity(
                 id,
