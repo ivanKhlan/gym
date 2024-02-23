@@ -1,6 +1,5 @@
 package ua.vixdev.gym.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,8 +7,7 @@ import java.time.Instant;
 
 @Data
 @Builder
-@AllArgsConstructor
-public class RequestTypeDto {
+public class ResponseTypeDto {
 
     private String value;
 
@@ -20,4 +18,5 @@ public class RequestTypeDto {
     private Instant updatedAt;
 
     private Instant deletedAt;
+
 }
