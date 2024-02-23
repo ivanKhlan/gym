@@ -20,17 +20,17 @@ public class TypeEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "value", length = 70)
+    @Column(name = "value", length = 70, nullable = false)
     private String value;
 
     @Column(name = "visible")
     private Boolean visible;
 
     @Column(name = "created_at")
-    private Instant createdAt = Instant.now();
+    private Instant createdAt;
 
     @Column(name = "updated_at")
-    private Instant updatedAt = Instant.now();
+    private Instant updatedAt;
 
     @Column(name = "deleted_at")
     private Instant deletedAt;
@@ -41,6 +41,12 @@ public class TypeEntity {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
+    }
+
+    @PrePersist
+    public void onSave() {
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
     }
 
 }
