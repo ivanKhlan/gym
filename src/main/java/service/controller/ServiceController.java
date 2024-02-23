@@ -11,12 +11,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/")
+@RequestMapping("/services")
 public class ServiceController {
 
     private final ServicesService servicesService;
 
-    @GetMapping("/services")
+    @GetMapping
     ResponseEntity<List<ServiceDto>> getAllServices(){
         List<ServiceDto> services =  servicesService.getAllService();
         return ResponseEntity.ok(services);
@@ -34,7 +34,7 @@ public class ServiceController {
         return ResponseEntity.ok(service);
     }
 
-    @PostMapping()
+    @PostMapping
     ResponseEntity<ServiceDto> createService(@RequestBody ServiceDto serviceDto){
         servicesService.createService(serviceDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(serviceDto);
