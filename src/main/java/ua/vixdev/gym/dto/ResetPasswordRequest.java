@@ -1,4 +1,4 @@
-package ua.vixdev.gym.controllers.dto;
+package ua.vixdev.gym.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
