@@ -3,6 +3,7 @@ package ua.vixdev.gym.reset_password.controllers;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.vixdev.gym.reset_password.dto.NewPasswordRequest;
@@ -30,8 +31,5 @@ public class ResetPasswordController {
         return resetPasswordService.isTokenValid(token);
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleException(EntityNotFoundException e){
-        return ResponseEntity.badRequest().body(e.getMessage());
-    }
+
 }
