@@ -7,8 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.vixdev.gym.status.dto.CreateStatusDto;
-import ua.vixdev.gym.status.dto.UpdateStatusDto;
+import ua.vixdev.gym.status.dto.StatusDto;
 import ua.vixdev.gym.status.entity.Status;
 import ua.vixdev.gym.status.exceptions.StatusVisibleException;
 import ua.vixdev.gym.status.service.StatusService;
@@ -38,13 +37,13 @@ public class StatusController {
     }
 
     @PostMapping()
-    ResponseEntity<?> createStatus(@RequestBody @Valid CreateStatusDto statusDto) {
+    ResponseEntity<?> createStatus(@RequestBody @Valid StatusDto statusDto) {
         var status = statusService.createStatus(statusDto);
         return new ResponseEntity<>(status, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody @Valid UpdateStatusDto statusDto) {
+    ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody @Valid StatusDto statusDto) {
         var status = statusService.updateStatus(id,statusDto);
         return new ResponseEntity<>(status, HttpStatus.ACCEPTED);
     }

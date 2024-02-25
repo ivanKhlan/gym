@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.vixdev.gym.status.dto.CreateStatusDto;
-import ua.vixdev.gym.status.dto.UpdateStatusDto;
+import ua.vixdev.gym.status.dto.StatusDto;
 import ua.vixdev.gym.status.entity.Status;
 import ua.vixdev.gym.status.exceptions.StatusAlreadyExists;
 import ua.vixdev.gym.status.exceptions.StatusNotFoundException;
@@ -45,15 +44,15 @@ public class StatusServiceImpl implements StatusService{
     }
 @Transactional
     @Override
-    public Status createStatus(CreateStatusDto createStatusDto) {
-        var statusEntity = createStatusDto.fromDto();
+    public Status createStatus(StatusDto statusDto) {
+        var statusEntity = statusDto.fromDto();
         Status savedStatus = statusRepository.save(statusEntity);
         log.info("Saved option: {}", savedStatus);
         return savedStatus;
     }
     @Transactional
     @Override
-    public Status updateStatus(Long id, UpdateStatusDto updateStatusDto) {
+    public Status updateStatus(Long id, StatusDto updateStatusDto) {
         var loadStatus = findStatusById(id);
         checkIfValueAlreadyExists(updateStatusDto.getValue());
         return updateStatusFields(loadStatus,updateStatusDto);
@@ -72,7 +71,7 @@ public class StatusServiceImpl implements StatusService{
         status.changeVisibility(visible);
         log.info("For a status with ID {}, the visibility has been changed to: {}", id, visible);
     }
-    private Status updateStatusFields(Status loadStatus, UpdateStatusDto updateStatusDto) {
+    private Status updateStatusFields(Status loadStatus, StatusDto updateStatusDto) {
         var updatedStatus = loadStatus.updateFields(updateStatusDto);
         log.info("Updated status: {}", updatedStatus);
         return updatedStatus;

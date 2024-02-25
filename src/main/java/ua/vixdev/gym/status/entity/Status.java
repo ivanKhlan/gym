@@ -5,7 +5,8 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import ua.vixdev.gym.status.dto.UpdateStatusDto;
+import ua.vixdev.gym.status.dto.StatusDto;
+
 
 import java.sql.Timestamp;
 @Entity
@@ -54,7 +55,7 @@ CREATE TABLE `status` (
     public void changeVisibility(String  visible){
         this.visible = Boolean.parseBoolean(visible);
     }
-    public Status updateFields(UpdateStatusDto updateStatusDto){
+    public Status updateFields(StatusDto updateStatusDto){
         if (updateStatusDto.getValue() != null) {
             value = updateStatusDto.getValue();
         }

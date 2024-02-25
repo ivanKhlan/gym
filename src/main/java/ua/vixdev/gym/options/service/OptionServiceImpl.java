@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.vixdev.gym.options.dto.CreateOptionDto;
-import ua.vixdev.gym.options.dto.UpdateOptionDto;
+import ua.vixdev.gym.options.dto.OptionDto;
 import ua.vixdev.gym.options.entity.Options;
 import ua.vixdev.gym.options.exceptions.OptionAlreadyExists;
 import ua.vixdev.gym.options.exceptions.OptionNotFoundException;
@@ -53,8 +52,8 @@ public class OptionServiceImpl implements OptionService {
 
     @Transactional
     @Override
-    public Options createOption(CreateOptionDto createOptionDto) {
-        var optionEntity = createOptionDto.fromDto();
+    public Options createOption(OptionDto optionDto) {
+        var optionEntity = optionDto.fromDto();
         Options savedOption = optionsRepository.save(optionEntity);
         log.info("Saved option: {}", savedOption);
         return savedOption;
@@ -63,7 +62,7 @@ public class OptionServiceImpl implements OptionService {
 
     @Transactional
     @Override
-    public Options updateOption(Long id, UpdateOptionDto updateOptionDto) {
+    public Options updateOption(Long id, OptionDto updateOptionDto) {
         var loadOption = findOptionById(id);
         checkIfKeyAlreadyExists(updateOptionDto.getKey());
         return updateOptionFields(loadOption, updateOptionDto);
@@ -84,7 +83,7 @@ public class OptionServiceImpl implements OptionService {
         log.info("For a option with ID {}, the visibility has been changed to: {}", id, visible);
     }
 
-    private Options updateOptionFields(Options loadOption, UpdateOptionDto optionDto) {
+    private Options updateOptionFields(Options loadOption, OptionDto optionDto) {
         var updatedOption = loadOption.updateFields(optionDto);
         log.info("Updated option: {}", updatedOption);
         return updatedOption;

@@ -1,7 +1,6 @@
 package ua.vixdev.gym.status.service;
 
-import ua.vixdev.gym.status.dto.CreateStatusDto;
-import ua.vixdev.gym.status.dto.UpdateStatusDto;
+import ua.vixdev.gym.status.dto.StatusDto;
 import ua.vixdev.gym.status.entity.Status;
 
 import java.util.List;
@@ -11,8 +10,8 @@ public interface StatusService {
     List<Status> findAllStatuses();
     List<Status> findStatusByVisible(boolean visible);
     Status findStatusById(Long id);
-    Status createStatus(CreateStatusDto createStatusDto);
-    Status updateStatus(Long id, UpdateStatusDto updateStatusDto);
+    Status createStatus(StatusDto statusDto);
+    Status updateStatus(Long id, StatusDto updateStatusDto);
     void deleteStatusById(Long id);
     void updateStatusVisibility(Long id, String visible);
 }

@@ -5,7 +5,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import ua.vixdev.gym.options.dto.UpdateOptionDto;
+import ua.vixdev.gym.options.dto.OptionDto;
 
 import java.sql.Timestamp;
 
@@ -63,7 +63,7 @@ CREATE TABLE `options` (
     public void changeVisibility(String  visible){
         this.visible = Boolean.parseBoolean(visible);
     }
-    public Options updateFields(UpdateOptionDto updateOptionDto){
+    public Options updateFields(OptionDto updateOptionDto){
         if (updateOptionDto.getKey()!= null) {
             key = updateOptionDto.getKey();
         }

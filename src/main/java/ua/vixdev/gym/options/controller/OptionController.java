@@ -6,8 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ua.vixdev.gym.options.dto.CreateOptionDto;
-import ua.vixdev.gym.options.dto.UpdateOptionDto;
+import ua.vixdev.gym.options.dto.OptionDto;
 import ua.vixdev.gym.options.entity.Options;
 import ua.vixdev.gym.options.exceptions.OptionVisibleException;
 import ua.vixdev.gym.options.service.OptionService;
@@ -35,13 +34,13 @@ public class OptionController {
     }
 
     @PostMapping()
-    ResponseEntity<?> createOption(@RequestBody @Valid CreateOptionDto optionDto) {
+    ResponseEntity<?> createOption(@RequestBody @Valid OptionDto optionDto) {
         var option = optionService.createOption(optionDto);
         return new ResponseEntity<>(option, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<?> updateOption(@PathVariable Long id, @RequestBody @Valid UpdateOptionDto optionDto) {
+    ResponseEntity<?> updateOption(@PathVariable Long id, @RequestBody @Valid OptionDto optionDto) {
         var option = optionService.updateOption(id, optionDto);
         return new ResponseEntity<>(option, HttpStatus.ACCEPTED);
     }
