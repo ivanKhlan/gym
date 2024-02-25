@@ -40,7 +40,7 @@ public class UserDto {
                 firstName,
                 lastName,
                 email,
-                password,
+                PasswordEncoders.encodePassword(password),
                 phoneNumber,
                 visible
         );
