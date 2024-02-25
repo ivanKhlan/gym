@@ -1,23 +1,21 @@
-package ua.vixdev.gym.user.dto;
+package ua.vixdev.gym.security.controller.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.utils.PasswordEncoders;
 
-/**
- * @author Volodymyr Holovetskyi
- * @version 1.0
- * @since 2024-02-20
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
-
+public class RegisterUserDto {
     private static final String PASSWORD_PATTERN = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
     private static final String EMAIL_PATTERN = "^([\\w-\\.]+){1,64}@([\\w&&[^_]]+){2,255}.[a-z]{2,}$";
     private static final String PHONE_PATTERN = "((\\+38)?\\(?\\d{3}\\)?[\\s\\.-]?(\\d{7}|\\d{3}[\\s\\.-]\\d{2}[\\s\\.-]\\d{2}|\\d{3}-\\d{4}))";
@@ -40,7 +38,7 @@ public class UserDto {
                 firstName,
                 lastName,
                 email,
-                password,
+                PasswordEncoders.encodePassword(password),
                 phoneNumber,
                 visible
         );
