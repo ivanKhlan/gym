@@ -12,17 +12,8 @@ import ua.vixdev.gym.options.entity.Options;
 import ua.vixdev.gym.options.exceptions.OptionNotFoundException;
 import ua.vixdev.gym.options.repository.OptionsRepository;
 import ua.vixdev.gym.options.service.OptionServiceImpl;
-import ua.vixdev.gym.status.dto.StatusDto;
-import ua.vixdev.gym.status.entity.Status;
-import ua.vixdev.gym.status.entity.StatusDtoData;
-import ua.vixdev.gym.status.entity.StatusEntityData;
-import ua.vixdev.gym.status.exceptions.StatusNotFoundException;
-import ua.vixdev.gym.status.repository.StatusRepository;
-import ua.vixdev.gym.status.service.StatusServiceImpl;
-
 import java.util.List;
 import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -73,7 +64,7 @@ public class OptionServiceTest {
         Options options = OptionEntityData.getSingleOptionWithId();
 
         //when
-        when(optionsRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        when(optionsRepository.findById(anyLong())).thenReturn(Optional.empty());
         OptionNotFoundException exception = assertThrows(OptionNotFoundException.class, () ->
                 optionService.deleteOptionById(options.getId()));
 
@@ -121,7 +112,7 @@ public class OptionServiceTest {
         Options option = OptionEntityData.getSingleOptionWithId();
 
         //when
-        when(optionsRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        when(optionsRepository.findById(anyLong())).thenReturn(Optional.empty());
         OptionNotFoundException exception = assertThrows(OptionNotFoundException.class, () ->
                 optionService.deleteOptionById(option.getId()));
 
@@ -149,7 +140,7 @@ public class OptionServiceTest {
        Options option = OptionEntityData.getSingleOptionWithId();
 
         //when
-        when(optionsRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        when(optionsRepository.findById(anyLong())).thenReturn(Optional.empty());
         OptionNotFoundException exception = assertThrows(OptionNotFoundException.class, () ->
                 optionService.deleteOptionById(option.getId()));
 

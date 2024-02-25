@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 import ua.vixdev.gym.status.entity.Status;
 import ua.vixdev.gym.status.mapper.StatusMapper;
 @Data

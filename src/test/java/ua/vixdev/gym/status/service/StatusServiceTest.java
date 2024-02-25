@@ -61,7 +61,7 @@ public class StatusServiceTest {
         Status status = StatusEntityData.getSingleStatusWithId();
 
         //when
-        when(statusRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        when(statusRepository.findById(anyLong())).thenReturn(Optional.empty());
         StatusNotFoundException exception= assertThrows(StatusNotFoundException.class, () ->
                 statusService.deleteStatusById(status.getId()));
 
@@ -109,7 +109,7 @@ public class StatusServiceTest {
         Status status = StatusEntityData.getSingleStatusWithId();
 
         //when
-        when(statusRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        when(statusRepository.findById(anyLong())).thenReturn(Optional.empty());
         StatusNotFoundException exception = assertThrows(StatusNotFoundException.class, () ->
                 statusService.deleteStatusById(status.getId()));
 
@@ -136,7 +136,7 @@ public class StatusServiceTest {
         Status status = StatusEntityData.getSingleStatusWithId();
 
         //when
-        when(statusRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+        when(statusRepository.findById(anyLong())).thenReturn(Optional.empty());
         StatusNotFoundException exception = assertThrows(StatusNotFoundException.class, () ->
                 statusService.deleteStatusById(status.getId()));
 
