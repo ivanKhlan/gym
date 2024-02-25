@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 
+/**
+ * Entity class representing a service.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

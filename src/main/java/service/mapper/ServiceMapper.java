@@ -5,8 +5,15 @@ import service.entity.EntityService;
 import service.exceptions.ServiceIsEmptyException;
 
 import java.time.LocalDateTime;
-
+/**
+ * Mapper class responsible for mapping between EntityService and ServiceDto objects.
+ */
 public class ServiceMapper {
+    /**
+     * Maps an EntityService object to a ServiceDto object.
+     * @param service The EntityService object to map.
+     * @return The mapped ServiceDto object.
+     */
     public  ServiceDto serviceToDto(EntityService service){
         if(service == null){
             return null;
@@ -24,7 +31,11 @@ public class ServiceMapper {
                 .updatedAt(service.getUpdatedAt())
                 .build();
     }
-
+    /**
+     * Maps a ServiceDto object to an EntityService object.
+     * @param serviceDto The ServiceDto object to map.
+     * @return The mapped EntityService object.
+     */
     public EntityService dtoToService(ServiceDto serviceDto){
         if(serviceDto == null){
             return null;
@@ -45,13 +56,22 @@ public class ServiceMapper {
     }
 
 
-    public EntityService updateService(EntityService entityService,ServiceDto service){
-       if(service == null){
-           throw new ServiceIsEmptyException();
-       }
-
+    /**
+     * Updates an EntityService object with data from a ServiceDto object.
+     * @param entityService The EntityService object to update.
+     * @param service The ServiceDto object containing updated data.
+     * @return The updated EntityService object.
+     * @throws ServiceIsEmptyException if the input ServiceDto object is null.
+     */
+    public EntityService updateService(EntityService entityService, ServiceDto service){
+        // Check if the input ServiceDto object is null
+        if(service == null){
+            // If the ServiceDto object is null, throw a ServiceIsEmptyException
+            throw new ServiceIsEmptyException();
+        }
+        // Convert the ServiceDto object to an EntityService object
        var updatedService =  dtoToService(service);
-
+        // Variables to hold the updated values for each field
        String textNew;
 
        String description;
@@ -67,7 +87,8 @@ public class ServiceMapper {
        String title;
 
        String image;
-
+        // Logic to update each field of the entityService object
+        // if the corresponding field in the updatedService object is not null or empty
        if(!updatedService.getText().isEmpty() && updatedService.getText() != null) {
           textNew = entityService.getText();
        }else {
@@ -115,7 +136,7 @@ public class ServiceMapper {
        }else {
            startDate = entityService.getStartDate();
        }
-
+       // Build and return a new EntityService object with the updated values
        return EntityService.builder()
                .updatedAt(LocalDateTime.now())
                .counts(counts)
@@ -128,7 +149,11 @@ public class ServiceMapper {
                .startDate(startDate)
                .build();
     }
-
+    /**
+     * Soft deletes an EntityService object by setting the deletedAt field.
+     * @param entityService The EntityService object to soft delete.
+     * @return The EntityService object with the deletedAt field set.
+     */
     public EntityService softDeleted(EntityService entityService){
 
         return EntityService.builder()

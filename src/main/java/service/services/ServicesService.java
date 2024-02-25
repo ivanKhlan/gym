@@ -11,7 +11,9 @@ import service.repository.ServiceRepository;
 import service.validator.ServiceValidator;
 
 import java.util.List;
-
+/**
+ * Service class responsible for handling business logic related to services.
+ */
 @Service
 public class ServicesService {
 
@@ -24,20 +26,32 @@ public class ServicesService {
         this.serviceRepository = serviceRepository;
         this.serviceMapper = serviceMapper;
     }
-
+    /**
+     * Retrieves all services from the repository and maps them to ServiceDto objects.
+     * @return List of ServiceDto objects representing all services.
+     */
     public List<ServiceDto> getAllService(){
         return serviceRepository.findAll()
                 .stream()
                 .map(serviceMapper::serviceToDto)
                 .toList();
     }
-
+    /**
+     * Retrieves a service by its ID from the repository and maps it to a ServiceDto object.
+     * Throws a ServiceNotFoundException if the service with the specified ID is not found.
+     * @param id The ID of the service to retrieve.
+     * @return ServiceDto object representing the retrieved service.
+     */
     public ServiceDto getServiceById(Long id){
         return serviceRepository.findById(id)
                 .map(serviceMapper::serviceToDto)
                 .orElseThrow(ServiceNotFoundException::new);
     }
-
+    /**
+     * Deletes a service by its ID from the repository.
+     * Throws a ServiceNotFoundException if the service with the specified ID is not found.
+     * @param id The ID of the service to delete.
+     */
     public void deleteService(Long id){
 
        var entityService = serviceRepository
@@ -48,7 +62,12 @@ public class ServicesService {
 
        serviceRepository.save(entityService);
     }
-
+    /**
+     * Creates a new service based on the provided ServiceDto object.
+     * Throws a ServiceIsEmptyException if the provided ServiceDto is null.
+     * @param serviceDto The ServiceDto object representing the service to create.
+     * @return ServiceDto object representing the newly created service.
+     */
     public ServiceDto createService(ServiceDto serviceDto){
         if(serviceDto == null){
             throw new ServiceIsEmptyException();
@@ -62,7 +81,13 @@ public class ServicesService {
 
         return serviceMapper.serviceToDto(entityService);
     }
-
+    /**
+     * Updates an existing service with the provided ID using data from the provided ServiceDto object.
+     * Throws a ServiceNotFoundException if the service with the specified ID is not found.
+     * @param id The ID of the service to update.
+     * @param serviceDto The ServiceDto object containing the updated service data.
+     * @return ServiceDto object representing the updated service.
+     */
     public ServiceDto updateService(Long id, ServiceDto serviceDto){
 
        var oldService = serviceRepository

@@ -6,9 +6,15 @@ import service.exceptions.DescriptionIsEmptyOrNullException;
 import service.exceptions.ImageIsEmptyOrNullException;
 import service.exceptions.ServiceIsEmptyException;
 import service.exceptions.TitleIsEmptyOrNullException;
-
+/**
+ * Utility class for validating service entities.
+ */
 public class ServiceValidator {
-
+    /**
+     * Validates the given service entity to ensure that it meets certain criteria.
+     * Throws exceptions if the service entity is null, or if its title, description, or image is empty or null.
+     * @param entityService The service entity to validate.
+     */
  public static void serviceValidate(EntityService entityService) {
     if(entityService == null){
 

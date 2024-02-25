@@ -3,8 +3,13 @@ package service.dto;
 import lombok.*;
 
 import java.time.LocalDateTime;
+
+/**
+ * DTO class representing a service.
+ */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Builder
 public class ServiceDto {
