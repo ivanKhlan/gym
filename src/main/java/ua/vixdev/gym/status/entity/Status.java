@@ -5,8 +5,6 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import ua.vixdev.gym.options.dto.UpdateOptionDto;
-import ua.vixdev.gym.options.entity.Options;
 import ua.vixdev.gym.status.dto.UpdateStatusDto;
 
 import java.sql.Timestamp;

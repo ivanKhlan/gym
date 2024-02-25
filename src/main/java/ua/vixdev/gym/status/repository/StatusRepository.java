@@ -3,7 +3,6 @@ package ua.vixdev.gym.status.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ua.vixdev.gym.options.entity.Options;
 import ua.vixdev.gym.status.entity.Status;
 
 import java.util.List;

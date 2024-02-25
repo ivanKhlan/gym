@@ -1,8 +1,5 @@
 package ua.vixdev.gym.status.service;
 
-import ua.vixdev.gym.options.dto.CreateOptionDto;
-import ua.vixdev.gym.options.dto.UpdateOptionDto;
-import ua.vixdev.gym.options.entity.Options;
 import ua.vixdev.gym.status.dto.CreateStatusDto;
 import ua.vixdev.gym.status.dto.UpdateStatusDto;
 import ua.vixdev.gym.status.entity.Status;
