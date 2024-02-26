@@ -45,7 +45,9 @@ public class UserController {
     public List<UserEntity> getAllUsers(
             @RequestParam Optional<String> firstName,
             @RequestParam Optional<String> lastName,
-            @RequestParam Optional<Boolean> visible) {
+            @RequestParam Optional<Boolean> visible,
+            @AuthenticationPrincipal Long id) {
+        System.out.println("Get all " + id);
         if (firstName.isPresent() && lastName.isPresent()) {
             return userService.findUsersByFirstNameAndLastName(firstName.get(), lastName.get());
         } else if (firstName.isPresent()) {

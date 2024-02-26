@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import ua.vixdev.gym.security.model.GymUserDetails;
 
 import java.io.IOException;
 
@@ -46,8 +47,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                     .verify(token.replace(TOKEN_PREFIX, ""))
                     .getSubject();
             if (userName != null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-                return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null, userDetails.getAuthorities());
+                GymUserDetails userDetails = (GymUserDetails) userDetailsService.loadUserByUsername(userName);
+                return new UsernamePasswordAuthenticationToken(userDetails.getId(), null, userDetails.getAuthorities());
             }
         }
         return null;

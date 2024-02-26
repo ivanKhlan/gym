@@ -42,8 +42,7 @@ public class GymSecurityConfiguration {
                                             UserDetailsService userDetailsService) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/users/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/clearCache").hasRole("ADMIN")
+                        .requestMatchers("/users/**").hasRole("ADMIN")
                         .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

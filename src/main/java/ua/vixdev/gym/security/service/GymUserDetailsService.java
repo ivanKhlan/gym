@@ -24,19 +24,18 @@ public class GymUserDetailsService implements UserDetailsService {
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (config.getUsername().equals(username)) {
-            return config.adminUser();
-        }
-        var user = userRepository.findByEmailAddress(username);
+        var user = userRepository.findById(Long.valueOf(username));
         if (user.isPresent()) {
             UserEntity userEntity = user.get();
-            return new GymUserDetails(
+            var userDetails = new GymUserDetails(
                     userEntity.getEmail(),
                     userEntity.getPassword(),
                     userEntity.getRoles()
                             .stream()
                             .map(userRole -> (GrantedAuthority) () -> userRole)
                             .toList());
+            userDetails.setId(userEntity.getId());
+            return userDetails;
         }
         log.error("User not found with username: {}", username);
         throw new UsernameNotFoundException("User not found with username: %s".formatted(username));

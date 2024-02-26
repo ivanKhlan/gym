@@ -13,8 +13,10 @@ import org.springframework.stereotype.Component;
 import ua.vixdev.gym.security.controller.dto.JwtTokenDto;
 import ua.vixdev.gym.security.controller.dto.LoginUserDto;
 import ua.vixdev.gym.security.controller.dto.RegisterUserDto;
+import ua.vixdev.gym.security.model.GymUserDetails;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.exceptions.buisnes_logic.UserAlreadyExistsException;
+import ua.vixdev.gym.user.exceptions.buisnes_logic.UserNotFoundException;
 import ua.vixdev.gym.user.repository.UserRepository;
 
 import java.util.Date;
@@ -70,13 +72,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private String authenticate(String username, String password) {
+        UserEntity user = userRepository.findByEmailAddress(username).orElseThrow();
         Authentication authenticate = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
+                new UsernamePasswordAuthenticationToken(user.getId(), password)
         );
 
-        UserDetails principal = (UserDetails) authenticate.getPrincipal();
+        GymUserDetails principal = (GymUserDetails) authenticate.getPrincipal();
         return JWT.create()
-                .withSubject(principal.getUsername())
+                .withSubject(String.valueOf(principal.getId()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
                 .sign(Algorithm.HMAC256(secret));
     }

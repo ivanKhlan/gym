@@ -12,8 +12,11 @@ import java.util.stream.Collectors;
 @ConfigurationProperties("app.security.admin")
 public class AdminConfig {
 
+    private String firstName;
+    private String lastName;
     private String username;
     private String password;
+    private String phoneNumber;
     private Set<String> roles;
 
     public User adminUser() {

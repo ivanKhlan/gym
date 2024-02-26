@@ -11,6 +11,7 @@ import java.util.Collection;
 @Setter
 public class GymUserDetails extends User {
 
+    private Long id;
     public GymUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
     }
