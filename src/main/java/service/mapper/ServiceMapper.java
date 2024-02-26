@@ -91,25 +91,25 @@ public class ServiceMapper {
        String image;
         // Logic to update each field of the entityService object
         // if the corresponding field in the updatedService object is not null or empty
-       if(!updatedService.getText().isEmpty() && updatedService.getText() != null) {
-          textNew = entityService.getText();
+       if(updatedService.getText() != null && !updatedService.getText().isEmpty()) {
+          textNew = updatedService.getText();
        }else {
           textNew = entityService.getText();
        }
 
-       if (!updatedService.getImage().isEmpty() && updatedService.getImage() != null){
+       if (updatedService.getImage() != null && !updatedService.getImage().isEmpty()){
            image = updatedService.getImage();
        }else{
            image = entityService.getImage();
        }
 
-       if(!updatedService.getTitle().isEmpty() && updatedService.getTitle() != null){
+       if(updatedService.getTitle() != null && !updatedService.getTitle().isEmpty() ){
            title = updatedService.getTitle();
        }else{
            title = entityService.getTitle();
        }
 
-       if(!updatedService.getDescription().isEmpty() && updatedService.getDescription() != null){
+       if(updatedService.getDescription() != null && !updatedService.getDescription().isEmpty()){
           description = updatedService.getDescription();
        }else{
           description = entityService.getDescription();

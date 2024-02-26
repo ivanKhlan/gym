@@ -48,7 +48,7 @@ public class ServiceController {
     public ResponseEntity<ServiceDto> createService(@RequestBody ServiceDto serviceDto){
         ServiceDto createdService =  servicesService.createService(serviceDto);
         if(createdService != null){
-            return ResponseEntity.status(HttpStatus.CREATED).body(serviceDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdService);
         }else{
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
