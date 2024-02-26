@@ -1,8 +1,10 @@
 package ua.vixdev.gym.security;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
@@ -15,15 +17,18 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import ua.vixdev.gym.security.config.AdminConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalAuthentication()
+@EnableConfigurationProperties(AdminConfig.class)
 public class GymSecurityConfiguration {
 
     private final String secret;
@@ -38,6 +43,7 @@ public class GymSecurityConfiguration {
         return http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/users/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/clearCache").hasRole("ADMIN")
                         .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -51,19 +57,7 @@ public class GymSecurityConfiguration {
     }
 
     @Bean
-    protected InMemoryUserDetailsManager configureAuthentication() {
-        List<UserDetails> users = new ArrayList<>();
-        List<GrantedAuthority> adminAuthority = new ArrayList<>();
-
-        adminAuthority.add(new SimpleGrantedAuthority("ADMIN"));
-        UserDetails admin = new User("admin", "{noop}pass", adminAuthority);
-        users.add(admin);
-
-        List<GrantedAuthority> userAuthority = new ArrayList<>();
-        adminAuthority.add(new SimpleGrantedAuthority("USER"));
-        UserDetails user = new User("user", "{noop}pass", userAuthority);
-        users.add(user);
-
-        return new InMemoryUserDetailsManager(users);
+    public PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

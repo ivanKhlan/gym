@@ -4,9 +4,9 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ua.vixdev.gym.user.entity.UserEntity;
-import ua.vixdev.gym.utils.PasswordEncoders;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Volodymyr Holovetskyi
@@ -34,15 +34,5 @@ public class UserDto {
     @Pattern(regexp = PHONE_PATTERN, message = "{user.phoneNumber.invalid}")
     private String phoneNumber;
     private Boolean visible;
-
-    public UserEntity toUserEntity() {
-        return new UserEntity(
-                firstName,
-                lastName,
-                email,
-                PasswordEncoders.encodePassword(password),
-                phoneNumber,
-                visible
-        );
-    }
+    private Set<String> roles;
 }

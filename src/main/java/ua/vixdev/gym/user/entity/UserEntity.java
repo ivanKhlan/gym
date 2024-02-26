@@ -10,8 +10,9 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ua.vixdev.gym.user.dto.UserDto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Volodymyr Holovetskyi
@@ -20,12 +21,11 @@ import java.util.Optional;
  */
 @Entity
 @Data
-@Table(name = "users", schema = "public", catalog = "gym")
+@Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class UserEntity {
+public class UserEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +48,14 @@ public class UserEntity {
     private String phoneNumber;
     @Column(name = "visible")
     private Boolean visible;
+    @CollectionTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Column(name = "role")
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new HashSet<>();
+
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -58,13 +66,14 @@ public class UserEntity {
     private LocalDateTime deletedAt;
 
 
-    public UserEntity(String firstName, String lastName, String email, String password, String phoneNumber, Boolean visible) {
+    public UserEntity(String firstName, String lastName, String email, String password, String phoneNumber, Boolean visible, Set<String> roles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.visible = Optional.ofNullable(visible).orElse(true);
+        this.roles = roles;
     }
 
     public UserEntity updateFields(UserDto userDto) {

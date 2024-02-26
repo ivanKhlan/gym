@@ -2,6 +2,7 @@ package ua.vixdev.gym.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.vixdev.gym.user.dto.UserDto;
@@ -21,8 +22,8 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<UserEntity> findUsersByFirstNameAndLastName(String firstName, String lastName) {
@@ -57,15 +58,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserEntity> findAllUsers() {
-       return printLogInfo(userRepository.findAll());
+        return printLogInfo(userRepository.findAll());
     }
 
     @Transactional
     @Override
-    public UserEntity createNewUser(UserDto user) {
-        checkIfEmailAlreadyExists(user.getEmail());
-        var userEntity = user.toUserEntity();
-        UserEntity savedUser = userRepository.save(userEntity);
+    public UserEntity createNewUser(UserDto userDto) {
+        checkIfEmailAlreadyExists(userDto.getEmail());
+        UserEntity savedUser = userRepository.save(new UserEntity(
+                userDto.getFirstName(),
+                userDto.getLastName(),
+                userDto.getEmail(),
+                passwordEncoder.encode(userDto.getPassword()),
+                userDto.getPhoneNumber(),
+                userDto.getVisible(),
+                userDto.getRoles()));
         log.info("Saved user with ID: {}", savedUser.getId());
         return savedUser;
     }

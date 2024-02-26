@@ -6,11 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ua.vixdev.gym.user.entity.UserEntity;
-import ua.vixdev.gym.utils.PasswordEncoders;
 
 @Data
 @AllArgsConstructor
@@ -26,21 +22,9 @@ public class RegisterUserDto {
     @Size(min = 2, max = 70, message = "{user.lastName.invalid}")
     private String lastName;
     @Email(regexp = EMAIL_PATTERN, message = "{user.email.invalid}")
-    private String email;
+    private String username;
     @Pattern(regexp = PASSWORD_PATTERN, message = "{user.password.invalid}")
     private String password;
     @Pattern(regexp = PHONE_PATTERN, message = "{user.phoneNumber.invalid}")
     private String phoneNumber;
-    private Boolean visible;
-
-    public UserEntity toUserEntity() {
-        return new UserEntity(
-                firstName,
-                lastName,
-                email,
-                PasswordEncoders.encodePassword(password),
-                phoneNumber,
-                visible
-        );
-    }
 }

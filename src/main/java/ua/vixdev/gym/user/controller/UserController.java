@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ua.vixdev.gym.user.dto.UserDto;
 import ua.vixdev.gym.user.entity.UserEntity;
@@ -45,7 +46,6 @@ public class UserController {
             @RequestParam Optional<String> firstName,
             @RequestParam Optional<String> lastName,
             @RequestParam Optional<Boolean> visible) {
-
         if (firstName.isPresent() && lastName.isPresent()) {
             return userService.findUsersByFirstNameAndLastName(firstName.get(), lastName.get());
         } else if (firstName.isPresent()) {
