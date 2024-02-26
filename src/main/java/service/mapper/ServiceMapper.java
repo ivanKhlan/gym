@@ -1,5 +1,6 @@
 package service.mapper;
 
+import org.springframework.stereotype.Component;
 import service.dto.ServiceDto;
 import service.entity.EntityService;
 import service.exceptions.ServiceIsEmptyException;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 /**
  * Mapper class responsible for mapping between EntityService and ServiceDto objects.
  */
+@Component
 public class ServiceMapper {
     /**
      * Maps an EntityService object to a ServiceDto object.
