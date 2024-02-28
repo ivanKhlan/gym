@@ -1,4 +1,4 @@
-package ua.vixdev.gym.user.exceptions.data_validation;
+package ua.vixdev.gym.user.exceptions;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -2,7 +2,6 @@ package ua.vixdev.gym.user.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -10,7 +9,7 @@ import ua.vixdev.gym.user.base.UserDataDto;
 import ua.vixdev.gym.user.base.UserEntityData;
 import ua.vixdev.gym.user.dto.UserDto;
 import ua.vixdev.gym.user.entity.UserEntity;
-import ua.vixdev.gym.user.exceptions.buisnes_logic.UserNotFoundException;
+import ua.vixdev.gym.user.exceptions.UserNotFoundException;
 import ua.vixdev.gym.user.repository.UserRepository;
 
 import java.util.List;

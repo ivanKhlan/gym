@@ -1,12 +1,17 @@
 package ua.vixdev.gym.user.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ua.vixdev.gym.security.model.UserRole;
 
-import java.util.List;
 import java.util.Set;
+
+import static ua.vixdev.gym.utils.FieldPatterns.*;
 
 /**
  * @author Volodymyr Holovetskyi
@@ -17,10 +22,6 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-
-    private static final String PASSWORD_PATTERN = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$";
-    private static final String EMAIL_PATTERN = "^([\\w-\\.]+){1,64}@([\\w&&[^_]]+){2,255}.[a-z]{2,}$";
-    private static final String PHONE_PATTERN = "((\\+38)?\\(?\\d{3}\\)?[\\s\\.-]?(\\d{7}|\\d{3}[\\s\\.-]\\d{2}[\\s\\.-]\\d{2}|\\d{3}-\\d{4}))";
     @NotBlank(message = "{user.firstName.notBlank}")
     @Size(min = 2, max = 70, message = "{user.firstName.invalid}")
     private String firstName;
@@ -34,5 +35,5 @@ public class UserDto {
     @Pattern(regexp = PHONE_PATTERN, message = "{user.phoneNumber.invalid}")
     private String phoneNumber;
     private Boolean visible;
-    private Set<String> roles;
+    private Set<UserRole> roles;
 }

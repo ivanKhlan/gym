@@ -9,11 +9,14 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import ua.vixdev.gym.security.model.UserSecurity;
 import ua.vixdev.gym.user.dto.UserDto;
 import ua.vixdev.gym.user.entity.UserEntity;
-import ua.vixdev.gym.user.exceptions.buisnes_logic.UserVisibleException;
+import ua.vixdev.gym.user.exceptions.UserVisibleException;
 import ua.vixdev.gym.user.service.UserService;
 
 import java.util.List;
@@ -31,23 +34,24 @@ import java.util.Optional;
 @RequestMapping(value = "/users")
 public class UserController {
     private final UserService userService;
+    private final UserSecurity userSecurity;
 
     /**
      * This method is used to find a list of users.
+     *
      * @param firstName The first parameter for the search criteria by firstName and is optional.
      * @param lastName  The second parameter for the search criteria by lastName and is optional.
-     * @param visible  The third parameter for the search criteria by visible and is optional.
+     * @param visible   The third parameter for the search criteria by visible and is optional.
      * @return List<User> Returns all users according to the criteria or without them with status 200(OK).
      */
     @ResponseStatus(HttpStatus.OK)
     @GetMapping()
     @Cacheable("users")
+    @Secured({"ROLE_ADMIN"})
     public List<UserEntity> getAllUsers(
             @RequestParam Optional<String> firstName,
             @RequestParam Optional<String> lastName,
-            @RequestParam Optional<Boolean> visible,
-            @AuthenticationPrincipal Long id) {
-        System.out.println("Get all " + id);
+            @RequestParam Optional<Boolean> visible) {
         if (firstName.isPresent() && lastName.isPresent()) {
             return userService.findUsersByFirstNameAndLastName(firstName.get(), lastName.get());
         } else if (firstName.isPresent()) {
@@ -62,26 +66,37 @@ public class UserController {
 
     /**
      * This method is used to view the details of a specific user.
-     * @param id This is a parameter for the search criteria by ID and is required.
+     *
+     * @param userId This is a parameter for the search criteria by ID and is required.
      * @return User Returns the specified user by ID with status 200(OK).
      */
     @ResponseStatus(HttpStatus.OK)
     @Cacheable("userDetail")
     @GetMapping("/{id}")
-    public UserEntity findUserById(@PathVariable Long id) {
-        return userService.findUserById(id);
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
+    public UserEntity findUserById(@PathVariable("id") Long userId, @AuthenticationPrincipal Long principalId ) {
+        final UserEntity requestedUser;
+        if (userId.equals(principalId)) {
+            requestedUser = userService.findUserById(userId);
+            return requestedUser;
+        }
+        requestedUser = userService.findUserById(userId);
+        final var loggedUser = userService.findUserById(principalId);
+        return authorize(requestedUser, loggedUser);
     }
 
     /**
      * This method is used to create a new user.
+     *
      * @param userDto This parameter represents a new user.
      * @return Returns a new user along with the user's location with status 201(CREATED).
      */
 
     @Caching(evict = {
-            @CacheEvict(value="users", allEntries=true),
-            @CacheEvict(value="userDetail", allEntries=true)})
+            @CacheEvict(value = "users", allEntries = true),
+            @CacheEvict(value = "userDetail", allEntries = true)})
     @PostMapping()
+    @Secured({"ROLE_ADMIN"})
     ResponseEntity<?> createUser(@RequestBody @Valid UserDto userDto) {
         var user = userService.createNewUser(userDto);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
@@ -89,15 +104,17 @@ public class UserController {
 
     /**
      * This method is used to update a user.
-     * @param id This is a parameter for the search criteria by ID.
+     *
+     * @param id      This is a parameter for the search criteria by ID.
      * @param userDto This parameter represents the updated user.
      * @return Returns the updated user with status 202(ACCEPTED).
      */
 
     @Caching(evict = {
-            @CacheEvict(value="users", allEntries=true),
-            @CacheEvict(value="userDetail", allEntries=true)})
+            @CacheEvict(value = "users", allEntries = true),
+            @CacheEvict(value = "userDetail", allEntries = true)})
     @PutMapping("/{id}")
+    @Secured({"ROLE_ADMIN"})
     ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid UserDto userDto) {
         var user = userService.updateUser(id, userDto);
         return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
@@ -105,15 +122,17 @@ public class UserController {
 
     /**
      * This method is used to update the user's visibility.
-     * @param id This is a parameter for the search criteria by ID.
+     *
+     * @param id   This is a parameter for the search criteria by ID.
      * @param body This parameter represents the updated user's visibility.
      * @return Returns the updated user with status 202(ACCEPTED).
      */
 
     @Caching(evict = {
-            @CacheEvict(value="users", allEntries=true),
-            @CacheEvict(value="userDetail", allEntries=true)})
+            @CacheEvict(value = "users", allEntries = true),
+            @CacheEvict(value = "userDetail", allEntries = true)})
     @PatchMapping("/{id}/visible")
+    @Secured({"ROLE_ADMIN"})
     ResponseEntity<?> updateUserVisibility(@PathVariable Long id,
                                            @RequestBody Map<String, String> body) {
 
@@ -131,13 +150,15 @@ public class UserController {
 
     /**
      * This method is used to delete a user.
+     *
      * @param id This is a parameter for the search criteria by ID.
      * @return Returns a status of 204(NO_CONTENT).
      */
     @Caching(evict = {
-            @CacheEvict(value="users", allEntries=true),
-            @CacheEvict(value="userDetail", allEntries=true)})
+            @CacheEvict(value = "users", allEntries = true),
+            @CacheEvict(value = "userDetail", allEntries = true)})
     @DeleteMapping("/{id}")
+    @Secured({"ROLE_ADMIN"})
     ResponseEntity<?> deleteUser(@PathVariable Long id) {
         userService.deleteUserById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -145,14 +166,24 @@ public class UserController {
 
     /**
      * This method is used to clear cache.
+     *
      * @return Returns a status 200(OK).
      */
     @Caching(evict = {
-            @CacheEvict(value="users", allEntries=true),
-            @CacheEvict(value="userDetail", allEntries=true)})
+            @CacheEvict(value = "users", allEntries = true),
+            @CacheEvict(value = "userDetail", allEntries = true)})
     @GetMapping("/clearCache")
+    @Secured({"ROLE_ADMIN"})
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> clearUsersCache() {
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private UserEntity authorize(UserEntity requestedUser, UserEntity loggedUser) {
+        if (userSecurity.isOwnerOrAdmin(requestedUser, loggedUser)) {
+            return requestedUser;
+        }
+        log.warn("The authenticated User: %s, does not have access to the resource".formatted(loggedUser.getEmail()));
+        throw new AccessDeniedException("The authenticated User: %s, does not have access to the resource".formatted(loggedUser.getEmail()));
     }
 }

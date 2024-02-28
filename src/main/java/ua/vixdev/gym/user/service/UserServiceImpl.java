@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.vixdev.gym.user.dto.UserDto;
 import ua.vixdev.gym.user.entity.UserEntity;
-import ua.vixdev.gym.user.exceptions.buisnes_logic.UserAlreadyExistsException;
-import ua.vixdev.gym.user.exceptions.buisnes_logic.UserNotFoundException;
+import ua.vixdev.gym.user.exceptions.UserAlreadyExistsException;
+import ua.vixdev.gym.user.exceptions.UserNotFoundException;
 import ua.vixdev.gym.user.repository.UserRepository;
 
 import java.util.List;

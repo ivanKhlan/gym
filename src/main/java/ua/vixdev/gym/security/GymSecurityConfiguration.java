@@ -34,9 +34,6 @@ public class GymSecurityConfiguration {
                                             AuthenticationManager authenticationManager,
                                             UserDetailsService userDetailsService) throws Exception {
         return http
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/users/**").hasRole(UserRole.ROLE_ADMIN.getRole())
-//                        .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager, userDetailsService, secret))

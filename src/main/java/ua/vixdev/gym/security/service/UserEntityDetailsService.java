@@ -8,26 +8,22 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.vixdev.gym.security.config.AdminConfig;
-import ua.vixdev.gym.security.model.GymUserDetails;
+import ua.vixdev.gym.security.model.UserEntityDetails;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.repository.UserRepository;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class GymUserDetailsService implements UserDetailsService {
-
+public class UserEntityDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final AdminConfig config;
-
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var user = userRepository.findById(Long.valueOf(username));
         if (user.isPresent()) {
             UserEntity userEntity = user.get();
-            var userDetails = new GymUserDetails(
+            var userDetails = new UserEntityDetails(
                     userEntity.getEmail(),
                     userEntity.getPassword(),
                     userEntity.getRoles()
@@ -37,7 +33,7 @@ public class GymUserDetailsService implements UserDetailsService {
             userDetails.setId(userEntity.getId());
             return userDetails;
         }
-        log.error("User with id: {}, not found", username);
+        log.warn("User with id: {}, not found", username);
         throw new UsernameNotFoundException("User with id: %s, not found".formatted(username));
     }
 }

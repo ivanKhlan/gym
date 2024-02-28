@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import ua.vixdev.gym.security.model.UserRole;
 import ua.vixdev.gym.user.dto.UserDto;
 
 import java.io.Serializable;
@@ -54,7 +55,7 @@ public class UserEntity implements Serializable {
     )
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles = new HashSet<>();
+    private Set<UserRole> roles = new HashSet<>();
 
     @CreatedDate
     @Column(name = "created_at")
@@ -66,7 +67,7 @@ public class UserEntity implements Serializable {
     private LocalDateTime deletedAt;
 
 
-    public UserEntity(String firstName, String lastName, String email, String password, String phoneNumber, Boolean visible, Set<String> roles) {
+    public UserEntity(String firstName, String lastName, String email, String password, String phoneNumber, Boolean visible, Set<UserRole> roles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
