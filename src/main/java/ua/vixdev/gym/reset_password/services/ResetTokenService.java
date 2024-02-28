@@ -26,7 +26,7 @@ public class ResetTokenService {
                 .tokenBody(tokenBody)
                 .user(user)
                 .build();
-
+        saveToken(resetPasswordToken);
         return resetPasswordToken;
     }
     public void saveToken(ResetPasswordToken token){

@@ -18,13 +18,12 @@ public class ResetPasswordController {
 
     private final ResetPasswordService resetPasswordService;
     @PostMapping
-    public void sendEmail(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
+    public void sendEmail(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         resetPasswordService.sendEmail(resetPasswordRequest);
     }
-
     @PostMapping("/new-password")
-    public void resetPassword(@RequestBody NewPasswordRequest newPasswordRequest){
-        resetPasswordService.resetPassword(newPasswordRequest);
+    public ResponseEntity<?> resetPassword(@RequestBody NewPasswordRequest newPasswordRequest){
+       return resetPasswordService.resetPassword(newPasswordRequest);
     }
     @PostMapping("/{token}")
     public boolean reviewToken(@PathVariable("token") String token){
