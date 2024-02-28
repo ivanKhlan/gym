@@ -9,14 +9,14 @@ import java.util.Collection;
 
 @Getter
 @Setter
-public class GymUserDetails extends User {
+public class UserEntityDetails extends User {
 
     private Long id;
-    public GymUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserEntityDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
     }
 
-    public GymUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public UserEntityDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
     }
 }

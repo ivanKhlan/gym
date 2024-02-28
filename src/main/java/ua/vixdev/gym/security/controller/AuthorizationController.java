@@ -8,22 +8,20 @@ import org.springframework.web.bind.annotation.RestController;
 import ua.vixdev.gym.security.controller.dto.JwtTokenDto;
 import ua.vixdev.gym.security.controller.dto.LoginUserDto;
 import ua.vixdev.gym.security.controller.dto.RegisterUserDto;
-import ua.vixdev.gym.security.service.AuthService;
-import ua.vixdev.gym.user.entity.UserEntity;
+import ua.vixdev.gym.security.service.AuthenticationService;
 
 @RestController
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthorizationController {
 
-    private final AuthService authService;
-
+    private final AuthenticationService authenticationService;
     @PostMapping("/login")
     public JwtTokenDto login(@RequestBody LoginUserDto loginUserDto) {
-        return authService.login(loginUserDto);
+        return authenticationService.login(loginUserDto);
     }
 
     @PostMapping("/register")
     public JwtTokenDto register(@RequestBody @Valid RegisterUserDto registerUserDto) {
-        return authService.register(registerUserDto);
+        return authenticationService.register(registerUserDto);
     }
 }

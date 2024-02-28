@@ -1,4 +1,4 @@
-package ua.vixdev.gym.security;
+package ua.vixdev.gym.security.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -9,10 +9,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import ua.vixdev.gym.security.model.GymUserDetails;
+import ua.vixdev.gym.security.model.UserEntityDetails;
 
 import java.io.IOException;
 
@@ -47,7 +46,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                     .verify(token.replace(TOKEN_PREFIX, ""))
                     .getSubject();
             if (userName != null) {
-                GymUserDetails userDetails = (GymUserDetails) userDetailsService.loadUserByUsername(userName);
+                UserEntityDetails userDetails = (UserEntityDetails) userDetailsService.loadUserByUsername(userName);
                 return new UsernamePasswordAuthenticationToken(userDetails.getId(), null, userDetails.getAuthorities());
             }
         }

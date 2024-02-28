@@ -14,6 +14,7 @@ import ua.vixdev.gym.security.controller.dto.JwtTokenDto;
 import ua.vixdev.gym.security.controller.dto.LoginUserDto;
 import ua.vixdev.gym.security.controller.dto.RegisterUserDto;
 import ua.vixdev.gym.security.model.GymUserDetails;
+import ua.vixdev.gym.security.model.UserRole;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.exceptions.buisnes_logic.UserAlreadyExistsException;
 import ua.vixdev.gym.user.exceptions.buisnes_logic.UserNotFoundException;
@@ -27,7 +28,6 @@ import java.util.Set;
 public class AuthServiceImpl implements AuthService {
 
     private static final String PREFIX_BCRYPT = "{bcrypt}";
-
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
                 passwordEncoder.encode(registerUserDto.getPassword()),
                 registerUserDto.getPhoneNumber(),
                 true,
-                Set.of("ROLE_USER")));
+                Set.of(UserRole.ROLE_USER)));
         log.info("Registered user with ID: {}", savedUser.getId());
         return new JwtTokenDto(authenticate(registerUserDto.getUsername(), registerUserDto.getPassword()));
     }

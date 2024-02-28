@@ -32,12 +32,12 @@ public class GymUserDetailsService implements UserDetailsService {
                     userEntity.getPassword(),
                     userEntity.getRoles()
                             .stream()
-                            .map(userRole -> (GrantedAuthority) () -> userRole)
+                            .map(userRole -> (GrantedAuthority) userRole::name)
                             .toList());
             userDetails.setId(userEntity.getId());
             return userDetails;
         }
-        log.error("User not found with username: {}", username);
-        throw new UsernameNotFoundException("User not found with username: %s".formatted(username));
+        log.error("User with id: {}, not found", username);
+        throw new UsernameNotFoundException("User with id: %s, not found".formatted(username));
     }
 }
