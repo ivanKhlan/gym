@@ -7,6 +7,6 @@ package ua.vixdev.gym.user.exceptions;
  */
 public class UserAlreadyExistsException extends RuntimeException {
     public UserAlreadyExistsException(String userEmail) {
-        super("User with email: {" + userEmail + "} already registered!");
+        super("User with email: " + userEmail + " already registered!");
     }
 }

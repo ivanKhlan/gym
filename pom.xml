@@ -119,6 +119,14 @@
             <artifactId>java-jwt</artifactId>
             <version>${jwt-version}</version>
         </dependency>
+
+<!--        cache-->
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <scope>runtime</scope>
+            <classifier>jakarta</classifier>
+        </dependency>
     </dependencies>
 
     <build>

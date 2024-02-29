@@ -2,7 +2,6 @@ package ua.vixdev.gym.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -11,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ua.vixdev.gym.security.model.UserRole;
 import ua.vixdev.gym.user.dto.UserDto;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -27,7 +27,8 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity implements Serializable {
-
+    @Serial
+    private static final long serialVersionUID = -1446398935944895849L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

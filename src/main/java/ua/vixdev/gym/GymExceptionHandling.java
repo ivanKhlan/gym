@@ -5,8 +5,10 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,6 +26,8 @@ import java.time.LocalDateTime;
  * @version 1.0
  * @since 2024-02-28
  */
+
+@ControllerAdvice
 public class GymExceptionHandling {
 
     private static final String EMPTY_URI = null;
@@ -63,6 +67,12 @@ public class GymExceptionHandling {
         return getErrorResponse(HttpStatus.FORBIDDEN.name(), HttpStatus.FORBIDDEN.value(), exception.getMessage(), EMPTY_URI);
     }
 
+    @ResponseBody
+    @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    ErrorResponse accessDeniedHandler(UsernameNotFoundException exception) {
+        return getErrorResponse(HttpStatus.FORBIDDEN.name(), HttpStatus.FORBIDDEN.value(), exception.getMessage(), EMPTY_URI);
+    }
     @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
