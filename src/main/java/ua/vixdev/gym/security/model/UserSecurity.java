@@ -3,6 +3,11 @@ package ua.vixdev.gym.security.model;
 import org.springframework.stereotype.Component;
 import ua.vixdev.gym.user.entity.UserEntity;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-24
+ */
 @Component
 public class UserSecurity {
 

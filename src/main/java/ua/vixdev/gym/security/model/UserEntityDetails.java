@@ -7,6 +7,11 @@ import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-24
+ */
 @Getter
 @Setter
 public class UserEntityDetails extends User {

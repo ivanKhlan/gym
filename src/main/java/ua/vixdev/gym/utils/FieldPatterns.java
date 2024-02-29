@@ -1,5 +1,10 @@
 package ua.vixdev.gym.utils;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-28
+ */
 public class FieldPatterns {
 
     private FieldPatterns() {

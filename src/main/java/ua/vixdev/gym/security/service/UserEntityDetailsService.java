@@ -12,6 +12,11 @@ import ua.vixdev.gym.security.model.UserEntityDetails;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.repository.UserRepository;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-24
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor

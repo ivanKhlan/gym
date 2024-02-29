@@ -21,6 +21,11 @@ import ua.vixdev.gym.user.repository.UserRepository;
 import java.util.Date;
 import java.util.Set;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-24
+ */
 @Component
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -28,8 +33,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private long expirationTime;
-    private String secret;
+    private final long expirationTime;
+    private final String secret;
 
     public AuthenticationServiceImpl(AuthenticationManager authenticationManager,
                                      UserRepository userRepository,

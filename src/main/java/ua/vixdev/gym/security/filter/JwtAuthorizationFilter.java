@@ -15,6 +15,11 @@ import ua.vixdev.gym.security.model.UserEntityDetails;
 
 import java.io.IOException;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-24
+ */
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private static final String TOKEN_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";

@@ -10,6 +10,11 @@ import ua.vixdev.gym.security.controller.dto.LoginUserDto;
 import ua.vixdev.gym.security.controller.dto.RegisterUserDto;
 import ua.vixdev.gym.security.service.AuthenticationService;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-23
+ */
 @RestController
 @RequiredArgsConstructor
 public class AuthorizationController {

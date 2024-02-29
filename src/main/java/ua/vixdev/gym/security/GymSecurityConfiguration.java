@@ -18,6 +18,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import ua.vixdev.gym.security.config.AdminConfig;
 import ua.vixdev.gym.security.filter.JwtAuthorizationFilter;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-24
+ */
 @Configuration
 @EnableWebSecurity
 @EnableConfigurationProperties(AdminConfig.class)

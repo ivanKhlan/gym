@@ -8,6 +8,11 @@ import org.springframework.security.core.userdetails.User;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-22
+ */
 @Data
 @ConfigurationProperties("app.security.admin")
 public class AdminConfig {

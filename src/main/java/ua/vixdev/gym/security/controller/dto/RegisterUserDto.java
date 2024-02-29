@@ -10,6 +10,11 @@ import lombok.NoArgsConstructor;
 
 import static ua.vixdev.gym.utils.FieldPatterns.*;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-23
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
