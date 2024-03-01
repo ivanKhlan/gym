@@ -19,6 +19,7 @@ public class ResetPasswordController {
     private final ResetPasswordService resetPasswordService;
     @PostMapping
     public void sendEmail(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+
         resetPasswordService.sendEmail(resetPasswordRequest);
     }
     @PostMapping("/new-password")
