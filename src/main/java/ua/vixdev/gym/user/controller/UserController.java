@@ -14,13 +14,15 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ua.vixdev.gym.security.model.UserSecurity;
-import ua.vixdev.gym.user.dto.UserDto;
-import ua.vixdev.gym.user.entity.UserEntity;
+import ua.vixdev.gym.user.controller.dto.CreateUserDto;
+import ua.vixdev.gym.user.controller.dto.GetUserDto;
+import ua.vixdev.gym.user.controller.dto.UpdateUserDto;
 import ua.vixdev.gym.user.exceptions.UserVisibleException;
 import ua.vixdev.gym.user.service.UserService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -47,7 +49,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping()
     @Secured({"ROLE_ADMIN"})
-    public List<UserEntity> getAllUsers(
+    public List<GetUserDto> getAllUsers(
             @RequestParam Optional<String> firstName,
             @RequestParam Optional<String> lastName,
             @RequestParam Optional<Boolean> visible) {
@@ -73,36 +75,40 @@ public class UserController {
     @GetMapping("/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Cacheable(cacheNames = {"users"}, key = "#id")
-    public UserEntity findUserById(@PathVariable("id") Long id, @AuthenticationPrincipal Long principalId) {
-        final UserEntity requestedUser;
-        if (id.equals(principalId)) {
+    public GetUserDto findUserById(@PathVariable("id") Long id, @AuthenticationPrincipal Long principalId) {
+        final GetUserDto requestedUser;
+        if (Objects.equals(id, principalId)) {
             requestedUser = userService.findUserById(id);
             return requestedUser;
         }
-        requestedUser = userService.findUserById(id);
-        final var loggedUser = userService.findUserById(principalId);
-        return authorize(requestedUser, loggedUser);
+        final var authorizedUser = userService.findUserById(principalId);
+         if (userSecurity.isAdmin(authorizedUser)){
+             requestedUser = userService.findUserById(id);
+             return requestedUser;
+         }
+        log.warn("The authenticated User: %s, does not have access to the resource".formatted(authorizedUser.getEmail()));
+        throw new AccessDeniedException("The authenticated User: %s, does not have access to the resource".formatted(authorizedUser.getEmail()));
     }
 
     /**
      * This method is used to create a new user.
      *
-     * @param userDto This parameter represents a new user.
+     * @param createUserDto This parameter represents a new user.
      * @return Returns a new user along with the user's location with status 201(CREATED).
      */
 
     @PostMapping()
     @Secured({"ROLE_ADMIN"})
     @ResponseStatus(HttpStatus.CREATED)
-    public UserEntity createUser(@RequestBody @Valid UserDto userDto) {
-        return userService.createNewUser(userDto);
+    public GetUserDto createUser(@RequestBody @Valid CreateUserDto createUserDto) {
+        return userService.createNewUser(createUserDto);
     }
 
     /**
      * This method is used to update a user.
      *
      * @param id      This is a parameter for the search criteria by ID.
-     * @param userDto This parameter represents the updated user.
+     * @param updateUserDto This parameter represents the updated user.
      * @return Returns the updated user with status 202(ACCEPTED).
      */
 
@@ -110,8 +116,8 @@ public class UserController {
     @Secured({"ROLE_ADMIN"})
     @CachePut(cacheNames = {"users"}, key = "#id")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public UserEntity updateUser(@PathVariable Long id, @RequestBody @Valid UserDto userDto) {
-        return userService.updateUser(id, userDto);
+    public GetUserDto updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserDto updateUserDto) {
+        return userService.updateUser(id, updateUserDto);
     }
 
     /**
@@ -166,13 +172,5 @@ public class UserController {
     @Secured({"ROLE_ADMIN"})
     @ResponseStatus(HttpStatus.OK)
     public void clearUsersCache() {
-    }
-
-    private UserEntity authorize(UserEntity requestedUser, UserEntity loggedUser) {
-        if (userSecurity.isOwnerOrAdmin(requestedUser, loggedUser)) {
-            return requestedUser;
-        }
-        log.warn("The authenticated User: %s, does not have access to the resource".formatted(loggedUser.getEmail()));
-        throw new AccessDeniedException("The authenticated User: %s, does not have access to the resource".formatted(loggedUser.getEmail()));
     }
 }

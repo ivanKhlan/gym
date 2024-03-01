@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ua.vixdev.gym.security.model.UserRole;
-import ua.vixdev.gym.user.dto.UserDto;
+import ua.vixdev.gym.user.controller.dto.GetUserDto;
+import ua.vixdev.gym.user.controller.dto.UpdateUserDto;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -78,29 +80,25 @@ public class UserEntity implements Serializable {
         this.roles = roles;
     }
 
-    public UserEntity updateFields(UserDto userDto) {
-        if (userDto.getFirstName() != null) {
-            firstName = userDto.getFirstName();
+    public UserEntity updateFields(UpdateUserDto createUserDto) {
+        if (createUserDto.getFirstName() != null) {
+            firstName = createUserDto.getFirstName();
         }
 
-        if (userDto.getLastName() != null) {
-            lastName = userDto.getLastName();
+        if (createUserDto.getLastName() != null) {
+            lastName = createUserDto.getLastName();
         }
 
-        if (userDto.getEmail() != null) {
-            email = userDto.getEmail();
+        if (createUserDto.getEmail() != null) {
+            email = createUserDto.getEmail();
         }
 
-        if (userDto.getPassword() != null) {
-            password = userDto.getPassword();
+        if (createUserDto.getPhoneNumber() != null) {
+            phoneNumber = createUserDto.getPhoneNumber();
         }
 
-        if (userDto.getPhoneNumber() != null) {
-            phoneNumber = userDto.getPhoneNumber();
-        }
-
-        if (userDto.getVisible() != null) {
-            visible = userDto.getVisible();
+        if (createUserDto.getVisible() != null) {
+            visible = createUserDto.getVisible();
         }
         return this;
     }
@@ -109,8 +107,29 @@ public class UserEntity implements Serializable {
         this.visible = Boolean.valueOf(visible);
     }
 
-    public boolean equalsEmail(String anotherEmail) {
-        return this.email.equals(anotherEmail);
+    public void changePassword(String password) {
+        if (StringUtils.isNotBlank(password)) {
+            this.password = password;
+        }
+    }
+
+    public GetUserDto toGetUserDto() {
+        return new GetUserDto(
+                id,
+                firstName,
+                lastName,
+                email,
+                emailVerifiedAt,
+                password,
+                rememberToken,
+                photoUrl,
+                phoneNumber,
+                visible,
+                roles,
+                createdAt,
+                updatedAt,
+                deletedAt
+        );
     }
 }
 

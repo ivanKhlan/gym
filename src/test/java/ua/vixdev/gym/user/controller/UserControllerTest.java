@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.vixdev.gym.user.base.UserDataDto;
-import ua.vixdev.gym.user.dto.UserDto;
+import ua.vixdev.gym.user.controller.dto.CreateUserDto;
 import ua.vixdev.gym.user.service.UserService;
 
 import java.util.HashMap;
@@ -34,7 +34,7 @@ class UserControllerTest {
     @Test
     void find_all_users_by_first_name_and_last_name() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
+        CreateUserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -50,7 +50,7 @@ class UserControllerTest {
     @Test
     void find_all_users_by_first_name() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
+        CreateUserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -65,7 +65,7 @@ class UserControllerTest {
     @Test
     void find_all_users_by_last_name() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
+        CreateUserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -80,7 +80,7 @@ class UserControllerTest {
     @Test
     void find_all_users_by_visible() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
+        CreateUserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -95,7 +95,7 @@ class UserControllerTest {
     @Test
     void find_all_users_by_invisible() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
+        CreateUserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -110,7 +110,7 @@ class UserControllerTest {
     @Test
     void find_all_users_and_return_status_ok() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
+        CreateUserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -124,7 +124,7 @@ class UserControllerTest {
     @Test
     void create_user_and_return_status_created() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
+        CreateUserDto user = UserDataDto.getSingleUserDto();
 
         //when
         //then
@@ -138,7 +138,7 @@ class UserControllerTest {
     @Test
     void update_user_and_return_status_accepted() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDtoWithFirstNameIgor();
+        CreateUserDto user = UserDataDto.getSingleUserDtoWithFirstNameIgor();
 
         //when
         //then
@@ -182,7 +182,7 @@ class UserControllerTest {
     @Test
     void deleted_user_and_return_status_no_content() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDtoWithFirstNameIgor();
+        CreateUserDto user = UserDataDto.getSingleUserDtoWithFirstNameIgor();
 
         //when
         //then

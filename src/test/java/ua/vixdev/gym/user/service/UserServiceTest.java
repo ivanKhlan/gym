@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.vixdev.gym.user.base.UserDataDto;
 import ua.vixdev.gym.user.base.UserEntityData;
-import ua.vixdev.gym.user.dto.UserDto;
+import ua.vixdev.gym.user.controller.dto.CreateUserDto;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.exceptions.UserNotFoundException;
 import ua.vixdev.gym.user.repository.UserRepository;
@@ -82,15 +82,15 @@ class UserServiceTest {
     void when_save_user_should_return_user() {
 
         //given
-        UserDto userDto = UserDataDto.getSingleUserDto();
+        CreateUserDto createUserDto = UserDataDto.getSingleUserDto();
         UserEntity userEntity = UserEntityData.getSingleUserEntity();
 
         //when
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
-        UserEntity created = userService.createNewUser(userDto);
+        UserEntity created = userService.createNewUser(createUserDto);
 
         //then
-        assertThat(created.getFirstName()).isSameAs(userDto.getFirstName());
+        assertThat(created.getFirstName()).isSameAs(createUserDto.getFirstName());
     }
 
     //update user
@@ -98,7 +98,7 @@ class UserServiceTest {
     void when_given_id_should_update_user_if_found() {
         //given
         UserEntity user = UserEntityData.getSingleUserEntityWithIdOne();
-        UserDto updateUser = UserDataDto.getSingleUserDtoWithFirstNameIgor();
+        CreateUserDto updateUser = UserDataDto.getSingleUserDtoWithFirstNameIgor();
         UserEntity userEntity = updateUser.toUserEntity();
         userEntity.setId(1L);
 

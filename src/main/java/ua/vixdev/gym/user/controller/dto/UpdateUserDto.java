@@ -1,4 +1,4 @@
-package ua.vixdev.gym.user.dto;
+package ua.vixdev.gym.user.controller.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,15 +13,11 @@ import java.util.Set;
 
 import static ua.vixdev.gym.utils.FieldPatterns.*;
 
-/**
- * @author Volodymyr Holovetskyi
- * @version 1.0
- * @since 2024-02-20
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
+public class UpdateUserDto {
+
     @NotBlank(message = "{user.firstName.notBlank}")
     @Size(min = 2, max = 70, message = "{user.firstName.invalid}")
     private String firstName;
@@ -30,8 +26,6 @@ public class UserDto {
     private String lastName;
     @Email(regexp = EMAIL_PATTERN, message = "{user.email.invalid}")
     private String email;
-    @Pattern(regexp = PASSWORD_PATTERN, message = "{user.password.invalid}")
-    private String password;
     @Pattern(regexp = PHONE_PATTERN, message = "{user.phoneNumber.invalid}")
     private String phoneNumber;
     private Boolean visible;
