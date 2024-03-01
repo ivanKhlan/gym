@@ -21,6 +21,12 @@ import java.util.Objects;
 public class ResetPasswordController {
     private final ResetPasswordService resetPassword;
 
+    /**
+     * This method is used to change a user's password.
+     *
+     * @param changePassword This parameter represents the password to change.
+     * @return Returns status 201(Accepted).
+     */
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PatchMapping("/{id}/changePassword")

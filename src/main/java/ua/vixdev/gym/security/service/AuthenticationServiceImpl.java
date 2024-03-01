@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ua.vixdev.gym.security.controller.dto.JwtTokenDto;
@@ -73,8 +74,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return new JwtTokenDto(authenticate(registerUserDto.getUsername(), registerUserDto.getPassword()));
     }
 
+    /**
+     * This method is used to create a token.
+     *
+     * @param username User's email
+     * @param password User's password
+     * @return Returns a token.
+     */
     private String authenticate(String username, String password) {
-        UserEntity user = userRepository.findByEmailAddress(username).orElseThrow();
+        UserEntity user = userRepository.findByEmailAddress(username)
+                .orElseThrow(() -> new UsernameNotFoundException("The User: %s, is not registered!".formatted(username)));
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getId(), password)
         );

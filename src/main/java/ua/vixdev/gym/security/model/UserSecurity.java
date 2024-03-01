@@ -2,7 +2,6 @@ package ua.vixdev.gym.security.model;
 
 import org.springframework.stereotype.Component;
 import ua.vixdev.gym.user.controller.dto.GetUserDto;
-import ua.vixdev.gym.user.entity.UserEntity;
 
 /**
  * @author Volodymyr Holovetskyi

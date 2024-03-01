@@ -1,4 +1,4 @@
-package ua.vixdev.gym.security;
+package ua.vixdev.gym.security.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

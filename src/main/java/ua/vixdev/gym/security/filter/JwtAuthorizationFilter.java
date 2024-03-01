@@ -32,6 +32,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         this.userDetailsService = userDetailsService;
         this.secret = secret;
     }
+
+    /**
+     * This method is used to validate the token.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws IOException, ServletException {

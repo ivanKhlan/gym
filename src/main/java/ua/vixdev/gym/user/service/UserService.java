@@ -1,6 +1,7 @@
 package ua.vixdev.gym.user.service;
 
 import ua.vixdev.gym.user.controller.dto.CreateUserDto;
+import ua.vixdev.gym.user.controller.dto.GetUserDetailsDto;
 import ua.vixdev.gym.user.controller.dto.GetUserDto;
 import ua.vixdev.gym.user.controller.dto.UpdateUserDto;
 import ua.vixdev.gym.user.entity.UserEntity;
@@ -19,7 +20,7 @@ public interface UserService {
     List<GetUserDto> findUsersByFirstName(String firstName);
     List<GetUserDto> findUsersByLastName(String lastName);
     List<GetUserDto> findAllUsers();
-    GetUserDto findUserById(Long id);
+    GetUserDetailsDto findUserById(Long id);
     UserEntity findUserEntityById(Long id);
     GetUserDto createNewUser(CreateUserDto createUserDto);
     GetUserDto updateUser(Long id, UpdateUserDto updateUserDto);

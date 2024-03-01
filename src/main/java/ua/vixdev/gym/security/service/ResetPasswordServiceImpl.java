@@ -7,9 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.vixdev.gym.security.controller.dto.ChangePasswordDto;
 import ua.vixdev.gym.security.exception.ChangePasswordException;
-import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.service.UserService;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-24
+ */
 @Service
 @RequiredArgsConstructor
 public class ResetPasswordServiceImpl implements ResetPasswordService {
@@ -24,7 +28,7 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
             throw new ChangePasswordException();
         }
 
-        UserEntity user = userService.findUserEntityById(id);
+        final var user = userService.findUserEntityById(id);
         final var password = passwordEncoder.encode(changePassword.getPassword());
         user.changePassword(password);
     }

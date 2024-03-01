@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ua.vixdev.gym.security.model.UserRole;
+import ua.vixdev.gym.user.controller.dto.GetUserDetailsDto;
 import ua.vixdev.gym.user.controller.dto.GetUserDto;
 import ua.vixdev.gym.user.controller.dto.UpdateUserDto;
 
@@ -119,15 +120,30 @@ public class UserEntity implements Serializable {
                 firstName,
                 lastName,
                 email,
-                emailVerifiedAt,
                 password,
-                rememberToken,
                 photoUrl,
-                phoneNumber,
+                visible,
+                roles,
+                createdAt,
+                updatedAt
+        );
+    }
+
+    public GetUserDetailsDto toGetUserDetailsDto() {
+        return new GetUserDetailsDto(
+                id,
+                firstName,
+                lastName,
+                email,
+                password,
+                photoUrl,
                 visible,
                 roles,
                 createdAt,
                 updatedAt,
+                rememberToken,
+                emailVerifiedAt,
+                phoneNumber,
                 deletedAt
         );
     }

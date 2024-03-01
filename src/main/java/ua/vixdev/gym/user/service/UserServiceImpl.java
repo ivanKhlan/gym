@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.vixdev.gym.user.controller.dto.CreateUserDto;
+import ua.vixdev.gym.user.controller.dto.GetUserDetailsDto;
 import ua.vixdev.gym.user.controller.dto.GetUserDto;
 import ua.vixdev.gym.user.controller.dto.UpdateUserDto;
 import ua.vixdev.gym.user.entity.UserEntity;
@@ -49,14 +50,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GetUserDto findUserById(Long id) {
+    public GetUserDetailsDto findUserById(Long id) {
         log.info("Loading user with ID: {}", id);
         var loadUser = userRepository.findById(id).orElseThrow(() -> {
             log.error("User with ID: {} not found!", id);
             return new UserNotFoundException(id);
         });
 
-        return loadUser.toGetUserDto();
+        return loadUser.toGetUserDetailsDto();
     }
 
     @Override

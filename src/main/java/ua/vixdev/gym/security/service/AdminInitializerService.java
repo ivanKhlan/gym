@@ -25,7 +25,9 @@ public class AdminInitializerService implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    /*Adding an admin to the database*/
+    /**
+     * This method is used to add an admin to the database.
+     */
     @Override
     public void run(String... args) {
         log.debug("Entering in run Method...");

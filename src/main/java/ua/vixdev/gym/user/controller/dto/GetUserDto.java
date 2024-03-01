@@ -9,6 +9,11 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author Volodymyr Holovetskyi
+ * @version 1.0
+ * @since 2024-02-28
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,14 +23,10 @@ public class GetUserDto {
     private String firstName;
     private String lastName;
     private String email;
-    private LocalDateTime emailVerifiedAt;
     private String password;
-    private String rememberToken;
     private String photoUrl;
-    private String phoneNumber;
     private Boolean visible;
     private Set<UserRole> roles = new HashSet<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private LocalDateTime deletedAt;
 }

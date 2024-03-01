@@ -5,16 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ua.vixdev.gym.security.model.UserSecurity;
 import ua.vixdev.gym.user.controller.dto.CreateUserDto;
+import ua.vixdev.gym.user.controller.dto.GetUserDetailsDto;
 import ua.vixdev.gym.user.controller.dto.GetUserDto;
 import ua.vixdev.gym.user.controller.dto.UpdateUserDto;
 import ua.vixdev.gym.user.exceptions.UserVisibleException;
@@ -22,7 +19,6 @@ import ua.vixdev.gym.user.service.UserService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -33,10 +29,10 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Secured({"ROLE_ADMIN"})
 @RequestMapping(value = "/users")
 public class UserController {
     private final UserService userService;
-    private final UserSecurity userSecurity;
 
     /**
      * This method is used to find a list of users.
@@ -48,7 +44,6 @@ public class UserController {
      */
     @ResponseStatus(HttpStatus.OK)
     @GetMapping()
-    @Secured({"ROLE_ADMIN"})
     public List<GetUserDto> getAllUsers(
             @RequestParam Optional<String> firstName,
             @RequestParam Optional<String> lastName,
@@ -73,21 +68,9 @@ public class UserController {
      */
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
-    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @Cacheable(cacheNames = {"users"}, key = "#id")
-    public GetUserDto findUserById(@PathVariable("id") Long id, @AuthenticationPrincipal Long principalId) {
-        final GetUserDto requestedUser;
-        if (Objects.equals(id, principalId)) {
-            requestedUser = userService.findUserById(id);
-            return requestedUser;
-        }
-        final var authorizedUser = userService.findUserById(principalId);
-         if (userSecurity.isAdmin(authorizedUser)){
-             requestedUser = userService.findUserById(id);
-             return requestedUser;
-         }
-        log.warn("The authenticated User: %s, does not have access to the resource".formatted(authorizedUser.getEmail()));
-        throw new AccessDeniedException("The authenticated User: %s, does not have access to the resource".formatted(authorizedUser.getEmail()));
+    public GetUserDetailsDto findUserById(@PathVariable("id") Long id) {
+        return userService.findUserById(id);
     }
 
     /**
@@ -98,7 +81,6 @@ public class UserController {
      */
 
     @PostMapping()
-    @Secured({"ROLE_ADMIN"})
     @ResponseStatus(HttpStatus.CREATED)
     public GetUserDto createUser(@RequestBody @Valid CreateUserDto createUserDto) {
         return userService.createNewUser(createUserDto);
@@ -107,14 +89,13 @@ public class UserController {
     /**
      * This method is used to update a user.
      *
-     * @param id      This is a parameter for the search criteria by ID.
+     * @param id            This is a parameter for the search criteria by ID.
      * @param updateUserDto This parameter represents the updated user.
      * @return Returns the updated user with status 202(ACCEPTED).
      */
 
     @PutMapping("/{id}")
-    @Secured({"ROLE_ADMIN"})
-    @CachePut(cacheNames = {"users"}, key = "#id")
+    @CacheEvict(cacheNames = {"users"}, allEntries = true)
     @ResponseStatus(HttpStatus.ACCEPTED)
     public GetUserDto updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserDto updateUserDto) {
         return userService.updateUser(id, updateUserDto);
@@ -129,9 +110,8 @@ public class UserController {
      */
 
     @PatchMapping("/{id}/visible")
-    @Secured({"ROLE_ADMIN"})
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @CacheEvict(cacheNames = {"users"}, key = "#id")
+    @CacheEvict(cacheNames = {"users"}, allEntries = true)
     public void updateUserVisibility(@PathVariable Long id,
                                      @RequestBody Map<String, String> body) {
 
@@ -155,7 +135,6 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @CacheEvict(cacheNames = {"users"}, key = "#id")
-    @Secured({"ROLE_ADMIN"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUserById(id);
@@ -169,7 +148,6 @@ public class UserController {
     @Caching(evict = {
             @CacheEvict(value = "users", allEntries = true)})
     @GetMapping("/clearCache")
-    @Secured({"ROLE_ADMIN"})
     @ResponseStatus(HttpStatus.OK)
     public void clearUsersCache() {
     }
