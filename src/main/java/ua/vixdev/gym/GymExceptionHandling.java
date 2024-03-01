@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import ua.vixdev.gym.security.exception.ChangePasswordException;
 import ua.vixdev.gym.user.exceptions.ErrorResponse;
 import ua.vixdev.gym.user.exceptions.UserAlreadyExistsException;
 import ua.vixdev.gym.user.exceptions.UserNotFoundException;
@@ -69,9 +70,16 @@ public class GymExceptionHandling {
 
     @ResponseBody
     @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    ErrorResponse usernameNotFoundHandler(UsernameNotFoundException exception) {
+        return getErrorResponse(HttpStatus.NOT_FOUND.name(), HttpStatus.NOT_FOUND.value(), exception.getMessage(), EMPTY_URI);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(ChangePasswordException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    ErrorResponse accessDeniedHandler(UsernameNotFoundException exception) {
-        return getErrorResponse(HttpStatus.FORBIDDEN.name(), HttpStatus.FORBIDDEN.value(), exception.getMessage(), EMPTY_URI);
+    ErrorResponse changePasswordHandler(ChangePasswordException exception) {
+        return getErrorResponse(HttpStatus.BAD_REQUEST.name(), HttpStatus.BAD_REQUEST.value(), exception.getMessage(), EMPTY_URI);
     }
     @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)

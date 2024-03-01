@@ -1,6 +1,7 @@
 package ua.vixdev.gym.security.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import ua.vixdev.gym.user.service.UserService;
  * @since 2024-02-24
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ResetPasswordServiceImpl implements ResetPasswordService {
 
@@ -24,12 +26,15 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
     @Override
     @Transactional
     public void changePassword(Long id, ChangePasswordDto changePassword) {
+        log.debug("Entering in changePassword Method...");
         if (!StringUtils.equals(changePassword.getPassword(), changePassword.getRepeatPassword())) {
+            log.warn("The passwords are not the same...");
             throw new ChangePasswordException();
         }
 
         final var user = userService.findUserEntityById(id);
         final var password = passwordEncoder.encode(changePassword.getPassword());
         user.changePassword(password);
+        log.info("Changing passwords for the User: {}", user.getEmail());
     }
 }
