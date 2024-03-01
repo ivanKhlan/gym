@@ -5,9 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.vixdev.gym.user.base.UserDataDto;
-import ua.vixdev.gym.user.base.UserEntityData;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import ua.vixdev.gym.user.controller.dto.CreateUserDto;
+import ua.vixdev.gym.user.controller.dto.GetUserDto;
+import ua.vixdev.gym.user.controller.dto.UpdateUserDto;
+import ua.vixdev.gym.user.data.UserDataTest;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.exceptions.UserNotFoundException;
 import ua.vixdev.gym.user.repository.UserRepository;
@@ -31,6 +33,8 @@ import static org.mockito.Mockito.when;
 class UserServiceTest {
     @Mock
     private UserRepository userRepository;
+    @Mock
+    PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -39,14 +43,15 @@ class UserServiceTest {
     @Test
     void should_return_all_users() {
         //given
-        List<UserEntity> users = UserEntityData.getListUserEntity();
+        List<UserEntity> users = UserDataTest.getListUserEntity();
 
         //when
         when(userRepository.findAll()).thenReturn(users);
-        List<UserEntity> expected = userService.findAllUsers();
+        List<GetUserDto> usersDto = userService.findAllUsers();
 
         //then
-        assertEquals(expected, users);
+        assertEquals(2, usersDto.size());
+        assertEquals(usersDto.get(0).getEmail(), users.get(0).getEmail());
         verify(userRepository).findAll();
     }
 
@@ -54,7 +59,7 @@ class UserServiceTest {
     @Test
     void when_given_id_should_return_user_if_found(){
         //given
-        UserEntity userEntity = UserEntityData.getSingleUserEntityWithIdOne();
+        UserEntity userEntity = UserDataTest.getUserEntityWithId();
 
         //when
         when(userRepository.findById(userEntity.getId())).thenReturn(Optional.of(userEntity));
@@ -66,7 +71,7 @@ class UserServiceTest {
     @Test()
     void should_throw_exception_when_user_doesnt_exist() {
         //given
-        UserEntity userEntity = UserEntityData.getSingleUserEntityWithIdOne();
+        UserEntity userEntity = UserDataTest.getUserEntityWithId();
 
         //when
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
@@ -82,12 +87,12 @@ class UserServiceTest {
     void when_save_user_should_return_user() {
 
         //given
-        CreateUserDto createUserDto = UserDataDto.getSingleUserDto();
-        UserEntity userEntity = UserEntityData.getSingleUserEntity();
+        CreateUserDto createUserDto = UserDataTest.getCreateUserDto();
+        UserEntity userEntity = UserDataTest.getUserEntity();
 
         //when
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
-        UserEntity created = userService.createNewUser(createUserDto);
+        GetUserDto created = userService.createNewUser(createUserDto);
 
         //then
         assertThat(created.getFirstName()).isSameAs(createUserDto.getFirstName());
@@ -95,26 +100,25 @@ class UserServiceTest {
 
     //update user
     @Test
-    void when_given_id_should_update_user_if_found() {
+    void when_given_id_should_update_username_if_found() {
         //given
-        UserEntity user = UserEntityData.getSingleUserEntityWithIdOne();
-        CreateUserDto updateUser = UserDataDto.getSingleUserDtoWithFirstNameIgor();
-        UserEntity userEntity = updateUser.toUserEntity();
-        userEntity.setId(1L);
+        UserEntity user = UserDataTest.getUserEntityWithId();
+        UpdateUserDto updatedUser = UserDataTest.getUpdateUserDto();
 
         //when
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        userService.updateUser(user.getId(), updateUser);
+        GetUserDto getUserDto = userService.updateUser(user.getId(), updatedUser);
 
 
         //then
+        assertEquals("holvetsky@gmail.com", getUserDto.getEmail());
         verify(userRepository).findById(user.getId());
     }
 
     @Test()
     void should_throw_exception_when_update_user_doesnt_exist() {
         //given
-        UserEntity userEntity = UserEntityData.getSingleUserEntityWithIdOne();
+        UserEntity userEntity = UserDataTest.getUserEntityWithId();
 
         //when
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
@@ -129,7 +133,7 @@ class UserServiceTest {
     @Test
     void when_given_id_should_delete_user_if_found(){
         //given
-        UserEntity userEntity = UserEntityData.getSingleUserEntityWithIdOne();
+        UserEntity userEntity = UserDataTest.getUserEntityWithId();
 
         //when
         when(userRepository.findById(userEntity.getId())).thenReturn(Optional.of(userEntity));
@@ -141,7 +145,7 @@ class UserServiceTest {
     @Test()
     void should_throw_exception_when_delete_user_doesnt_exist() {
         //given
-        UserEntity userEntity = UserEntityData.getSingleUserEntityWithIdOne();
+        UserEntity userEntity = UserDataTest.getUserEntityWithId();
 
         //when
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
