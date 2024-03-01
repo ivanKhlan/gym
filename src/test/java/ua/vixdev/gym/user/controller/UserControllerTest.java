@@ -1,18 +1,28 @@
 package ua.vixdev.gym.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.ehcache.CacheManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ua.vixdev.gym.user.base.UserDataDto;
-import ua.vixdev.gym.user.dto.UserDto;
+import ua.vixdev.gym.security.model.UserSecurity;
+import ua.vixdev.gym.user.controller.dto.CreateUserDto;
+import ua.vixdev.gym.user.controller.dto.UpdateUserDto;
+import ua.vixdev.gym.user.data.UserDataTest;
 import ua.vixdev.gym.user.service.UserService;
 
 import java.util.HashMap;
@@ -24,18 +34,21 @@ import java.util.Map;
  * @since 2024-02-22
  */
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest(UserController.class)
+@WebMvcTest(value = {UserController.class},
+excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfigurer.class)},
+excludeAutoConfiguration = {SecurityAutoConfiguration.class})
 class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private UserSecurity userSecurity;
     @MockBean
     private UserService userService;
     @Test
     void find_all_users_by_first_name_and_last_name() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
-
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders
@@ -50,8 +63,6 @@ class UserControllerTest {
     @Test
     void find_all_users_by_first_name() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
-
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders
@@ -65,8 +76,6 @@ class UserControllerTest {
     @Test
     void find_all_users_by_last_name() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
-
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders
@@ -80,8 +89,6 @@ class UserControllerTest {
     @Test
     void find_all_users_by_visible() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
-
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders
@@ -95,8 +102,6 @@ class UserControllerTest {
     @Test
     void find_all_users_by_invisible() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
-
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders
@@ -110,8 +115,6 @@ class UserControllerTest {
     @Test
     void find_all_users_and_return_status_ok() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
-
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders
@@ -124,7 +127,7 @@ class UserControllerTest {
     @Test
     void create_user_and_return_status_created() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDto();
+        CreateUserDto user = UserDataTest.getCreateUserDto();
 
         //when
         //then
@@ -138,13 +141,12 @@ class UserControllerTest {
     @Test
     void update_user_and_return_status_accepted() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDtoWithFirstNameIgor();
-
+        UpdateUserDto updateUserDto = UserDataTest.getUpdateUserDto();
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders
                         .put("http://localhost:8080/users/1")
-                        .content(toJsonString(user))
+                        .content(toJsonString(updateUserDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isAccepted());
     }
@@ -182,7 +184,7 @@ class UserControllerTest {
     @Test
     void deleted_user_and_return_status_no_content() throws Exception {
         //given
-        UserDto user = UserDataDto.getSingleUserDtoWithFirstNameIgor();
+        CreateUserDto user = UserDataTest.getCreateUserDto();
 
         //when
         //then

@@ -1,4 +1,4 @@
-package ua.vixdev.gym.user.exceptions.buisnes_logic;
+package ua.vixdev.gym.user.exceptions;
 
 /**
  * @author Volodymyr Holovetskyi
@@ -7,6 +7,6 @@ package ua.vixdev.gym.user.exceptions.buisnes_logic;
  */
 public class UserAlreadyExistsException extends RuntimeException {
     public UserAlreadyExistsException(String userEmail) {
-        super("User with email: {" + userEmail + "} already registered!");
+        super("User with email: " + userEmail + " already registered!");
     }
 }

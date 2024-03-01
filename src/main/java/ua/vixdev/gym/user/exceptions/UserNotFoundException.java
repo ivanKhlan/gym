@@ -1,4 +1,4 @@
-package ua.vixdev.gym.user.exceptions.buisnes_logic;
+package ua.vixdev.gym.user.exceptions;
 
 /**
  * @author Volodymyr Holovetskyi

@@ -1,4 +1,4 @@
-package ua.vixdev.gym.user.exceptions.data_validation;
+package ua.vixdev.gym.user.exceptions;
 
 /**
  * @author Volodymyr Holovetskyi
