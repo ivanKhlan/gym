@@ -3,6 +3,7 @@ package ua.vixdev.gym.reset_password.controllers;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +19,12 @@ public class ResetPasswordController {
 
     private final ResetPasswordService resetPasswordService;
     @PostMapping
+    @ResponseStatus(HttpStatus.OK)
     public void sendEmail(@RequestBody ResetPasswordRequest resetPasswordRequest) {
 
         resetPasswordService.sendEmail(resetPasswordRequest);
     }
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/new-password")
     public ResponseEntity<?> resetPassword(@RequestBody NewPasswordRequest newPasswordRequest){
        return resetPasswordService.resetPassword(newPasswordRequest);
