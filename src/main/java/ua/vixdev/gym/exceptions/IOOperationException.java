@@ -5,8 +5,8 @@ import java.io.IOException;
 /**
  * Exception for the case when uploading file process went wrong.
  */
-public class FailedUploadImageException extends IOException {
-    public FailedUploadImageException(String message) {
+public class IOOperationException extends IOException {
+    public IOOperationException(String message) {
         super(message);
     }
 }

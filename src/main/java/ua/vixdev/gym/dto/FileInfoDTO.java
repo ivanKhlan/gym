@@ -5,7 +5,7 @@ package ua.vixdev.gym.dto;
  */
 public record FileInfoDTO(
         String fileName,
-        String fullFilePath,
+        String absPath,
         String contentType,
         String fileSize
 ) {}

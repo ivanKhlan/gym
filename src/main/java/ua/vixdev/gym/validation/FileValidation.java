@@ -8,6 +8,7 @@ import ua.vixdev.gym.exceptions.EmptyFileException;
 public class FileValidation {
 
     /**
+     * Checks whether file is not empty.
      * More validation criterias could be added (e.g. file types).
      *
      * @param file that user tries to upload
