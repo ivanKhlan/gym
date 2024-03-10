@@ -8,7 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ua.vixdev.gym.dto.CreateFolderDTO;
 import ua.vixdev.gym.dto.FolderDto;
 import ua.vixdev.gym.dto.VisionLevelDTO;
-import ua.vixdev.gym.exceptions.FolderAlreadyExists;
+import ua.vixdev.gym.exceptions.FolderAlreadyExistsException;
 import ua.vixdev.gym.exceptions.FolderNotEmptyException;
 import ua.vixdev.gym.exceptions.EntityNotFoundException;
 import ua.vixdev.gym.exceptions.IOOperationException;
@@ -33,7 +33,7 @@ public class FolderTypesController {
         }
     }
 
-    @GetMapping("all")
+    @GetMapping
     public List<FolderDto> obtainAllVisibleFolders() {
         return folderService.getAllVisibleFolders();
     }
@@ -43,7 +43,7 @@ public class FolderTypesController {
     public Long createNewFolder(@RequestBody @Valid CreateFolderDTO folder) {
         try {
             return folderService.createNewFolder(folder);
-        } catch (FolderAlreadyExists e) {
+        } catch (FolderAlreadyExistsException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
@@ -59,7 +59,7 @@ public class FolderTypesController {
     }
 
     @DeleteMapping("/{folderId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void deleteFolder(@PathVariable Long folderId) {
         try {
             folderService.deleteFolder(folderId);

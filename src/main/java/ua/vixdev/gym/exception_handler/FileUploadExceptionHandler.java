@@ -54,6 +54,13 @@ public class FileUploadExceptionHandler {
         return new ErrorResponse(List.of(e.getMessage().split(":")[1].trim()), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, LocalDateTime.now());
     }
 
+    /**
+     * Handles invalid request body (BAD_REQUEST) exception
+     * and provides reasons via messages.
+     *
+     * @param e triggered exception.
+     * @return info about what was wrong in request.
+     */
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

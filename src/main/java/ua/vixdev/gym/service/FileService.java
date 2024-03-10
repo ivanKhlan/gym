@@ -22,6 +22,4 @@ public interface FileService {
     void deleteFile(Long fileId) throws EntityNotFoundException, IOOperationException;
 
     FileInfoDTO updateFile(Long fileId, MultipartFile file) throws EntityNotFoundException, IOOperationException, EmptyFileException;
-
-//    FileInfoDTO uploadImageToFileStorage(MultipartFile file) throws FailedUploadImageException, EmptyFileException;
 }

@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import ua.vixdev.gym.dto.CreateFolderDTO;
 import ua.vixdev.gym.dto.FolderDto;
 import ua.vixdev.gym.entity.FolderTypes;
-import ua.vixdev.gym.exceptions.FolderAlreadyExists;
-import ua.vixdev.gym.exceptions.FolderNotEmptyException;
 import ua.vixdev.gym.exceptions.EntityNotFoundException;
+import ua.vixdev.gym.exceptions.FolderAlreadyExistsException;
+import ua.vixdev.gym.exceptions.FolderNotEmptyException;
 import ua.vixdev.gym.exceptions.IOOperationException;
 import ua.vixdev.gym.mapper.FolderTypesMapper;
 import ua.vixdev.gym.repository.FolderTypesRepository;
@@ -34,7 +34,7 @@ public class FolderTypesServiceImpl implements FolderTypesService {
     public FolderDto obtainCertainFolder(Long folderId) throws EntityNotFoundException {
         return folderMapper.mapEntityToDto(
                 folderRepository.findByIdAndVisibleIsTrue(folderId)
-                        .orElseThrow(() -> new EntityNotFoundException("Failed to obtain information about folder with %s".formatted(folderId)))
+                        .orElseThrow(() -> new EntityNotFoundException("Failed to obtain information about folder with id %s".formatted(folderId)))
         );
     }
 
@@ -47,11 +47,11 @@ public class FolderTypesServiceImpl implements FolderTypesService {
     }
 
     @Override
-    public Long createNewFolder(CreateFolderDTO folder) throws FolderAlreadyExists {
+    public Long createNewFolder(CreateFolderDTO folder) throws FolderAlreadyExistsException {
         File theDir = new File(folder.getTitle());
         if (!theDir.mkdir()){
             log.info("Failed to save folder with name {}", folder.getTitle());
-            throw new FolderAlreadyExists("Folder with name %s is already created.".formatted(folder.getTitle()));
+            throw new FolderAlreadyExistsException("Folder with the name %s is already exists.".formatted(folder.getTitle()));
         }
 
         if (!folder.getTitle().endsWith("/")) {

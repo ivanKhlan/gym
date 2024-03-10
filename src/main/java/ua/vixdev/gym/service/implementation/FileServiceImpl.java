@@ -2,7 +2,6 @@ package ua.vixdev.gym.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ua.vixdev.gym.dto.FileInfoDTO;
@@ -15,6 +14,7 @@ import ua.vixdev.gym.mapper.FileMapper;
 import ua.vixdev.gym.repository.FilesRepository;
 import ua.vixdev.gym.repository.FolderTypesRepository;
 import ua.vixdev.gym.service.FileService;
+import ua.vixdev.gym.utils.HashingUtil;
 import ua.vixdev.gym.validation.FileValidation;
 
 import java.io.File;
@@ -24,9 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Class with business logic of file storage (downloading to locale file system).
- */
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -42,7 +40,7 @@ public class FileServiceImpl implements FileService {
     public FileRepresentationDTO obtainFileById(Long fileId) throws EntityNotFoundException, IOOperationException {
         log.info("Getting file via id {}", fileId);
         Files file = filesRepository.findByIdAndVisibleIsTrue(fileId)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to found file with id %s".formatted(fileId)));
+                .orElseThrow(() -> new EntityNotFoundException("Failed to find file with id %s".formatted(fileId)));
         byte[] fileBytes;
         try {
             fileBytes = java.nio.file.Files.readAllBytes(new File(file.getFolder().getTitle() + file.getName()).toPath());
@@ -65,7 +63,6 @@ public class FileServiceImpl implements FileService {
                     } catch (IOException e) {
                         log.warn("Failed to get info about file with id {}. Reason: {}", file.getId(), e.getCause());
                         throw new RuntimeException("Failed to get image information. Please try again later.");
-//                        throw new IOOperationException("Failed to get image information. Please try again later.");
                     }
                 })
                 .toList();
@@ -76,7 +73,7 @@ public class FileServiceImpl implements FileService {
         fileValidation.validateFile(file);
 
         String[] splitArr = file.getOriginalFilename().split("\\.");
-        String hashedFileName = DigestUtils.md5Hex(LocalDateTime.now().toString()) + "." + splitArr[splitArr.length - 1];
+        String hashedFileName = HashingUtil.createHashedFileName() + "." + splitArr[splitArr.length - 1];
         log.info("New file name: {}. Length: {}", hashedFileName, hashedFileName.length());
 
         Files savedFile = filesRepository.save(fileMapper.mapMultipartFileToEntity(
@@ -130,32 +127,6 @@ public class FileServiceImpl implements FileService {
 
     private Files obtainFileAndThrowExceptionIfNotFound(Long fileId) throws EntityNotFoundException {
         return filesRepository.findById(fileId)
-                .orElseThrow(() -> new EntityNotFoundException(("Failed to found file with id %s".formatted(fileId))));
+                .orElseThrow(() -> new EntityNotFoundException(("Failed to find file with id %s".formatted(fileId))));
     }
-
-    /**
-     * Save file that was provided by user.
-     * To each file name unique UUID is added. This is required to avoid collision in case two users upload images with the same name.
-     *
-     * @param file uploaded file itself.
-     * @return brief details about stored file.
-     * @throws IOOperationException if file downloading process wasn't possible for some reasons.
-     * @throws EmptyFileException         in case user didn't mention any file in request body.
-     */
-//    public FileInfoDTO uploadImageToFileStorage(MultipartFile file) throws FailedUploadImageException, EmptyFileException {
-//        fileValidation.validateFile(file);
-//
-//        String newFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-//        String filePathAndName = filePath + newFileName;
-//
-//        try {
-//            file.transferTo(new File(filePathAndName));
-//            log.info("File successfully stored with the location: {}", filePathAndName);
-//        } catch (IOException e) {
-//            log.warn("Failed to upload file to {}.\nReason: {}", filePathAndName, e.getMessage());
-//            throw new FailedUploadImageException("Something went wrong while uploading your file. Please try again later.");
-//        }
-//
-//        return new FileInfoDTO(newFileName, filePathAndName, file.getContentType(), file.getSize() + "B");
-//    }
 }
