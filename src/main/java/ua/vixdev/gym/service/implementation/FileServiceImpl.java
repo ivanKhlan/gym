@@ -96,6 +96,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public FileInfoDTO updateFile(Long fileId, MultipartFile file) throws EntityNotFoundException, IOOperationException, EmptyFileException {
+        log.info("Updating file with id {}", file);
         Files fileToDelete = obtainFileAndThrowExceptionIfNotFound(fileId);
         FileInfoDTO fileInfo = uploadFile(fileToDelete.getFolder().getId(), file);
         deleteFile(fileId);
