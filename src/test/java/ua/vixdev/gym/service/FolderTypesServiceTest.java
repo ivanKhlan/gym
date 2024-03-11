@@ -1,10 +1,6 @@
 package ua.vixdev.gym.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,10 +9,7 @@ import ua.vixdev.gym.dto.CreateFolderDTO;
 import ua.vixdev.gym.dto.FolderDto;
 import ua.vixdev.gym.entity.Files;
 import ua.vixdev.gym.entity.FolderTypes;
-import ua.vixdev.gym.exceptions.EntityNotFoundException;
-import ua.vixdev.gym.exceptions.FolderAlreadyExistsException;
-import ua.vixdev.gym.exceptions.FolderNotEmptyException;
-import ua.vixdev.gym.exceptions.IOOperationException;
+import ua.vixdev.gym.exceptions.*;
 import ua.vixdev.gym.mapper.FolderTypesMapper;
 import ua.vixdev.gym.repository.FolderTypesRepository;
 import ua.vixdev.gym.service.implementation.FolderTypesServiceImpl;
@@ -29,9 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@Slf4j
 @ExtendWith(MockitoExtension.class)
-@TestMethodOrder(MethodOrderer.MethodName.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FolderTypesServiceTest {
 
     @InjectMocks
@@ -45,18 +37,20 @@ public class FolderTypesServiceTest {
     FolderTypes folderTypes;
     FolderDto folderDto;
     CreateFolderDTO createFolderDTO;
+    String folderName = "temp_storage";
 
     @BeforeEach
     void config() {
-        folderTypes = new FolderTypes(1L, "temp_storage", true,
+        folderTypes = new FolderTypes(1L, folderName, true,
                 LocalDateTime.of(2024, 3, 9, 10, 25, 31), null, List.of());
-        folderDto = new FolderDto(1L, "temp_storage", LocalDateTime.of(2024, 3, 9, 10, 25, 31), null);
+        folderDto = new FolderDto(1L, folderName, LocalDateTime.of(2024, 3, 9, 10, 25, 31), null);
 
         createFolderDTO = new CreateFolderDTO();
-        createFolderDTO.setTitle("temp_storage");
+        createFolderDTO.setTitle(folderName);
     }
 
     @Test
+    @Order(1)
     void obtainFolderById() throws Exception {
         when(folderRepository.findByIdAndVisibleIsTrue(1L)).thenReturn(Optional.of(folderTypes));
         when(folderMapper.mapEntityToDto(folderTypes)).thenReturn(folderDto);
@@ -73,6 +67,7 @@ public class FolderTypesServiceTest {
     }
 
     @Test
+    @Order(2)
     void obtainFolderById_EntityNotFoundException() {
 
         when(folderRepository.findByIdAndVisibleIsTrue(1L)).thenReturn(Optional.empty());
@@ -82,6 +77,7 @@ public class FolderTypesServiceTest {
     }
 
     @Test
+    @Order(3)
     void getAllVisibleFolders() {
         when(folderRepository.getAllByVisibleIsTrue()).thenReturn(List.of(folderTypes));
         when(folderMapper.mapEntityToDto(folderTypes)).thenReturn(folderDto);
@@ -96,6 +92,7 @@ public class FolderTypesServiceTest {
     }
 
     @Test
+    @Order(4)
     void createNewFolder() throws FolderAlreadyExistsException {
         when(folderRepository.save(folderTypes)).thenReturn(folderTypes);
         when(folderMapper.mapDtoToEntity(createFolderDTO)).thenReturn(folderTypes);
@@ -106,6 +103,7 @@ public class FolderTypesServiceTest {
     }
 
     @Test
+    @Order(5)
     void createNewFolder_FolderAlreadyExistsException() {
         Exception e = assertThrows(FolderAlreadyExistsException.class, () -> folderService.createNewFolder(createFolderDTO));
 
@@ -113,6 +111,48 @@ public class FolderTypesServiceTest {
     }
 
     @Test
+    @Order(6)
+    void renameFolder() throws Exception {
+        String folderToRename = "/data";
+        String newFolderName = "temp_folder_renamed";
+
+        createTempFolderBeforeRenaming(folderToRename); // creating folder inside already create to rename it
+
+        when(folderRepository.findById(1L)).thenReturn(Optional.of(folderTypes));
+        folderService.renameFolder(1L, newFolderName);
+
+
+        verify(folderRepository, times(1)).findById(1L);
+
+        deleteTempFolderAfterRenaming(); // deleting nested folder created for this test
+        folderTypes.setTitle(folderName); //setting folder name to the very beginning version
+    }
+
+    @Test
+    @Order(7)
+    void renameFolder_EntityNotFoundException() {
+        when(folderRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Exception e = assertThrows(EntityNotFoundException.class, () -> folderService.renameFolder(1L, ""));
+
+        assertEquals("Failed to find folder with id 1", e.getMessage());
+    }
+
+    @Test
+    @Order(8)
+    void renameFolder_FailedRenameFolderException() {
+        String newFolderName = "some_name";
+        when(folderRepository.findById(1L)).thenReturn(Optional.of(folderTypes));
+
+        // Exception will be thrown because .getParentFile() method will produce null
+        Exception e = assertThrows(FailedRenameFolderException.class, () -> folderService.renameFolder(1L, newFolderName));
+
+        assertEquals("Failed to rename folder from %s to %s. Most likely such a folder already exists.".formatted(folderName, "null\\"+newFolderName+"\\"),
+                e.getMessage());
+    }
+
+    @Test
+    @Order(9)
     void changeVisibilityLeve() throws EntityNotFoundException {
         when(folderRepository.findById(1L)).thenReturn(Optional.of(folderTypes));
         when(folderRepository.save(folderTypes)).thenReturn(folderTypes);
@@ -123,16 +163,18 @@ public class FolderTypesServiceTest {
     }
 
     @Test
+    @Order(10)
     void changeVisibilityLevel_EntityNotFoundException() {
         when(folderRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception e = assertThrows(EntityNotFoundException.class, () -> folderService.changeFolderVisibility(1L, true));
 
-        assertEquals(e.getMessage(), "Failed to get information about folder with id 1");
+        assertEquals(e.getMessage(), "Failed to find folder with id 1");
         verify(folderRepository, times(1)).findById(1L);
     }
 
     @Test
+    @Order(11)
     void deleteFolder() throws EntityNotFoundException, FolderNotEmptyException, IOOperationException {
         when(folderRepository.findById(1L)).thenReturn(Optional.of(folderTypes));
 
@@ -142,16 +184,18 @@ public class FolderTypesServiceTest {
     }
 
     @Test
+    @Order(12)
     void deleteFolder_EntityNotFoundException() {
         when(folderRepository.findById(1L)).thenReturn(Optional.empty());
 
         Exception e = assertThrows(EntityNotFoundException.class, () -> folderService.deleteFolder(1L));
 
-        assertEquals(e.getMessage(), "Failed to found folder with id 1");
+        assertEquals(e.getMessage(), "Failed to find folder with id 1");
         verify(folderRepository, times(1)).findById(1L);
     }
 
     @Test
+    @Order(13)
     void deleteFolder_FolderNotEmptyException() {
         when(folderRepository.findById(1L)).thenReturn(Optional.of(folderTypes));
 
@@ -163,6 +207,7 @@ public class FolderTypesServiceTest {
     }
 
     @Test
+    @Order(14)
     void deleteFolder_IOOperationException() {
         folderTypes.setTitle("random_folder/\\//"); // setting incorrect folder name to provoke IOException throwing
         when(folderRepository.findById(1L)).thenReturn(Optional.of(folderTypes));
@@ -171,5 +216,20 @@ public class FolderTypesServiceTest {
 
         assertEquals(e.getMessage(), "Failed to delete folder. Please try again later.");
         verify(folderRepository, times(1)).findById(1L);
+    }
+
+    private void createTempFolderBeforeRenaming(String folderName) throws Exception {
+        createFolderDTO.setTitle(createFolderDTO.getTitle() + folderName);
+        folderTypes.setTitle(folderTypes.getTitle() + folderName); // renaming folder name to represent nested one
+        when(folderRepository.save(folderTypes)).thenReturn(folderTypes);
+        when(folderMapper.mapDtoToEntity(createFolderDTO)).thenReturn(folderTypes);
+
+        folderService.createNewFolder(createFolderDTO);
+    }
+
+    private void deleteTempFolderAfterRenaming() throws Exception {
+        when(folderRepository.findById(1L)).thenReturn(Optional.of(folderTypes));
+
+        folderService.deleteFolder(1L);
     }
 }

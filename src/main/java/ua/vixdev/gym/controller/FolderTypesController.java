@@ -7,11 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ua.vixdev.gym.dto.CreateFolderDTO;
 import ua.vixdev.gym.dto.FolderDto;
+import ua.vixdev.gym.dto.RenameFolderDTO;
 import ua.vixdev.gym.dto.VisionLevelDTO;
-import ua.vixdev.gym.exceptions.FolderAlreadyExistsException;
-import ua.vixdev.gym.exceptions.FolderNotEmptyException;
-import ua.vixdev.gym.exceptions.EntityNotFoundException;
-import ua.vixdev.gym.exceptions.IOOperationException;
+import ua.vixdev.gym.exceptions.*;
 import ua.vixdev.gym.service.FolderTypesService;
 
 import java.util.List;
@@ -48,6 +46,18 @@ public class FolderTypesController {
         }
     }
 
+    @PutMapping("{folderId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void renameFolder(@PathVariable Long folderId, @RequestBody @Valid RenameFolderDTO renamedFolder) {
+        try {
+            folderService.renameFolder(folderId, renamedFolder.newFolderName());
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (FailedRenameFolderException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }
+    }
+
     @PutMapping("visibility/{folderId}")
     @ResponseStatus(HttpStatus.OK)
     public void updateFolderVisibility(@PathVariable Long folderId, @RequestBody VisionLevelDTO visionLevel) {
@@ -58,7 +68,7 @@ public class FolderTypesController {
         }
     }
 
-    @DeleteMapping("/{folderId}")
+    @DeleteMapping("{folderId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteFolder(@PathVariable Long folderId) {
         try {

@@ -6,10 +6,7 @@ import org.springframework.stereotype.Service;
 import ua.vixdev.gym.dto.CreateFolderDTO;
 import ua.vixdev.gym.dto.FolderDto;
 import ua.vixdev.gym.entity.FolderTypes;
-import ua.vixdev.gym.exceptions.EntityNotFoundException;
-import ua.vixdev.gym.exceptions.FolderAlreadyExistsException;
-import ua.vixdev.gym.exceptions.FolderNotEmptyException;
-import ua.vixdev.gym.exceptions.IOOperationException;
+import ua.vixdev.gym.exceptions.*;
 import ua.vixdev.gym.mapper.FolderTypesMapper;
 import ua.vixdev.gym.repository.FolderTypesRepository;
 import ua.vixdev.gym.service.FolderTypesService;
@@ -49,7 +46,7 @@ public class FolderTypesServiceImpl implements FolderTypesService {
     @Override
     public Long createNewFolder(CreateFolderDTO folder) throws FolderAlreadyExistsException {
         File theDir = new File(folder.getTitle());
-        if (!theDir.mkdir()){
+        if (!theDir.mkdir()) {
             log.info("Failed to save folder with name {}", folder.getTitle());
             throw new FolderAlreadyExistsException("Folder with the name %s is already exists.".formatted(folder.getTitle()));
         }
@@ -64,9 +61,27 @@ public class FolderTypesServiceImpl implements FolderTypesService {
     }
 
     @Override
+    public void renameFolder(Long folderId, String newFolderName) throws EntityNotFoundException, FailedRenameFolderException {
+        FolderTypes folder = obtainFolderByIdAndThrowExceptionIfNotFound(folderId);
+
+        newFolderName += "\\";
+        log.info("Added back slash to the directory name in renaming process: {}", newFolderName);
+
+        File file = new File(folder.getTitle());
+        newFolderName = file.getParentFile() + File.separator + newFolderName;
+        log.info("New folder path will be {}", newFolderName);
+        if (!file.renameTo(new File(newFolderName))) {
+            log.warn("Failed to rename folder to {} from {}", newFolderName, folder.getTitle());
+            throw new FailedRenameFolderException("Failed to rename folder from %s to %s. Most likely such a folder already exists.".formatted(folder.getTitle(), newFolderName));
+        }
+        folder.setTitle(newFolderName);
+        folderRepository.save(folder);
+        log.info("Folder was successfully renamed to {}", newFolderName);
+    }
+
+    @Override
     public void changeFolderVisibility(Long folderId, Boolean visibilityLevel) throws EntityNotFoundException {
-        FolderTypes folder = folderRepository.findById(folderId)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to get information about folder with id %s".formatted(folderId)));
+        FolderTypes folder = obtainFolderByIdAndThrowExceptionIfNotFound(folderId);
 
         folder.setVisible(visibilityLevel);
         folder.setUpdatedAt(LocalDateTime.now());
@@ -76,8 +91,7 @@ public class FolderTypesServiceImpl implements FolderTypesService {
 
     @Override
     public void deleteFolder(Long folderId) throws EntityNotFoundException, FolderNotEmptyException, IOOperationException {
-        FolderTypes folder = folderRepository.findById(folderId)
-                .orElseThrow(() -> new EntityNotFoundException("Failed to found folder with id %s".formatted(folderId)));
+        FolderTypes folder = obtainFolderByIdAndThrowExceptionIfNotFound(folderId);
 
         if (!folder.getFiles().isEmpty())
             throw new FolderNotEmptyException("Failed to delete folder, because there are some files on it.");
@@ -91,5 +105,10 @@ public class FolderTypesServiceImpl implements FolderTypesService {
 
         log.info("Deleting folder with id {}", folderId);
         folderRepository.deleteById(folderId);
+    }
+
+    private FolderTypes obtainFolderByIdAndThrowExceptionIfNotFound(Long folderId) throws EntityNotFoundException {
+        return folderRepository.findById(folderId)
+                .orElseThrow(() -> new EntityNotFoundException("Failed to find folder with id %s".formatted(folderId)));
     }
 }
