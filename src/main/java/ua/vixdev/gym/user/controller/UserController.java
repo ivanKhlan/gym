@@ -8,11 +8,13 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import ua.vixdev.gym.user.dto.UserDto;
-import ua.vixdev.gym.user.entity.UserEntity;
-import ua.vixdev.gym.user.exceptions.buisnes_logic.UserVisibleException;
+import ua.vixdev.gym.user.controller.dto.CreateUserDto;
+import ua.vixdev.gym.user.controller.dto.GetUserDetailsDto;
+import ua.vixdev.gym.user.controller.dto.GetUserDto;
+import ua.vixdev.gym.user.controller.dto.UpdateUserDto;
+import ua.vixdev.gym.user.exceptions.UserVisibleException;
 import ua.vixdev.gym.user.service.UserService;
 
 import java.util.List;
@@ -27,25 +29,25 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Secured({"ROLE_ADMIN"})
 @RequestMapping(value = "/users")
 public class UserController {
     private final UserService userService;
 
     /**
      * This method is used to find a list of users.
+     *
      * @param firstName The first parameter for the search criteria by firstName and is optional.
      * @param lastName  The second parameter for the search criteria by lastName and is optional.
-     * @param visible  The third parameter for the search criteria by visible and is optional.
+     * @param visible   The third parameter for the search criteria by visible and is optional.
      * @return List<User> Returns all users according to the criteria or without them with status 200(OK).
      */
     @ResponseStatus(HttpStatus.OK)
     @GetMapping()
-    @Cacheable("users")
-    public List<UserEntity> getAllUsers(
+    public List<GetUserDto> getAllUsers(
             @RequestParam Optional<String> firstName,
             @RequestParam Optional<String> lastName,
             @RequestParam Optional<Boolean> visible) {
-
         if (firstName.isPresent() && lastName.isPresent()) {
             return userService.findUsersByFirstNameAndLastName(firstName.get(), lastName.get());
         } else if (firstName.isPresent()) {
@@ -60,68 +62,65 @@ public class UserController {
 
     /**
      * This method is used to view the details of a specific user.
+     *
      * @param id This is a parameter for the search criteria by ID and is required.
      * @return User Returns the specified user by ID with status 200(OK).
      */
     @ResponseStatus(HttpStatus.OK)
-    @Cacheable("userDetail")
     @GetMapping("/{id}")
-    public UserEntity findUserById(@PathVariable Long id) {
+    @Cacheable(cacheNames = {"users"}, key = "#id")
+    public GetUserDetailsDto findUserById(@PathVariable("id") Long id) {
         return userService.findUserById(id);
     }
 
     /**
      * This method is used to create a new user.
-     * @param userDto This parameter represents a new user.
+     *
+     * @param createUserDto This parameter represents a new user.
      * @return Returns a new user along with the user's location with status 201(CREATED).
      */
 
-    @Caching(evict = {
-            @CacheEvict(value="users", allEntries=true),
-            @CacheEvict(value="userDetail", allEntries=true)})
     @PostMapping()
-    ResponseEntity<?> createUser(@RequestBody @Valid UserDto userDto) {
-        var user = userService.createNewUser(userDto);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public GetUserDto createUser(@RequestBody @Valid CreateUserDto createUserDto) {
+        return userService.createNewUser(createUserDto);
     }
 
     /**
      * This method is used to update a user.
-     * @param id This is a parameter for the search criteria by ID.
-     * @param userDto This parameter represents the updated user.
+     *
+     * @param id            This is a parameter for the search criteria by ID.
+     * @param updateUserDto This parameter represents the updated user.
      * @return Returns the updated user with status 202(ACCEPTED).
      */
 
-    @Caching(evict = {
-            @CacheEvict(value="users", allEntries=true),
-            @CacheEvict(value="userDetail", allEntries=true)})
     @PutMapping("/{id}")
-    ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid UserDto userDto) {
-        var user = userService.updateUser(id, userDto);
-        return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
+    @CacheEvict(cacheNames = {"users"}, allEntries = true)
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public GetUserDto updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserDto updateUserDto) {
+        return userService.updateUser(id, updateUserDto);
     }
 
     /**
      * This method is used to update the user's visibility.
-     * @param id This is a parameter for the search criteria by ID.
+     *
+     * @param id   This is a parameter for the search criteria by ID.
      * @param body This parameter represents the updated user's visibility.
-     * @return Returns the updated user with status 202(ACCEPTED).
+     * @return Returns status 202(ACCEPTED).
      */
 
-    @Caching(evict = {
-            @CacheEvict(value="users", allEntries=true),
-            @CacheEvict(value="userDetail", allEntries=true)})
     @PatchMapping("/{id}/visible")
-    ResponseEntity<?> updateUserVisibility(@PathVariable Long id,
-                                           @RequestBody Map<String, String> body) {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @CacheEvict(cacheNames = {"users"}, allEntries = true)
+    public void updateUserVisibility(@PathVariable Long id,
+                                     @RequestBody Map<String, String> body) {
 
         var visible = body.get("visible");
-        if (StringUtils.isNotBlank(visible)
-                && (StringUtils.equalsIgnoreCase(visible, "true") ||
+        if ((StringUtils.equalsIgnoreCase(visible, "true") ||
                 StringUtils.equalsIgnoreCase(visible, "false"))) {
             visible = visible.toLowerCase();
             userService.updateUserVisibility(id, visible);
-            return ResponseEntity.accepted().build();
+            return;
         }
         log.error("Unknown visibility value: {}!", visible);
         throw new UserVisibleException(visible);
@@ -129,28 +128,27 @@ public class UserController {
 
     /**
      * This method is used to delete a user.
+     *
      * @param id This is a parameter for the search criteria by ID.
      * @return Returns a status of 204(NO_CONTENT).
      */
-    @Caching(evict = {
-            @CacheEvict(value="users", allEntries=true),
-            @CacheEvict(value="userDetail", allEntries=true)})
+
     @DeleteMapping("/{id}")
-    ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    @CacheEvict(cacheNames = {"users"}, key = "#id")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable Long id) {
         userService.deleteUserById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
      * This method is used to clear cache.
+     *
      * @return Returns a status 200(OK).
      */
     @Caching(evict = {
-            @CacheEvict(value="users", allEntries=true),
-            @CacheEvict(value="userDetail", allEntries=true)})
+            @CacheEvict(value = "users", allEntries = true)})
     @GetMapping("/clearCache")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> clearUsersCache() {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public void clearUsersCache() {
     }
 }
