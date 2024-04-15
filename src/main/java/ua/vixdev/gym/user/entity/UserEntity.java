@@ -57,14 +57,32 @@ public class UserEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "notation")
+    private String notation;
 
-    public UserEntity(String firstName, String lastName, String email, String password, String phoneNumber, Boolean visible) {
+    @Column(name = "birthday", nullable = false)
+    private String birthday;
+
+    @Column(name = "gender_id", nullable = false)
+    private Integer genderId;
+
+    @Column(name = "type_id", columnDefinition = "integer default 1")
+    private Integer typeId;
+
+
+    public UserEntity(String firstName, String lastName, String email, String password,
+                      String phoneNumber, Boolean visible, String notation,
+                      String birthday, Integer genderId, Integer typeId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.visible = Optional.ofNullable(visible).orElse(true);
+        this.notation = notation;
+        this.birthday = birthday;
+        this.genderId = genderId;
+        this.typeId = Optional.ofNullable(typeId).orElse(1);
     }
 
     public UserEntity updateFields(UserDto userDto) {
@@ -91,6 +109,22 @@ public class UserEntity {
         if (userDto.getVisible() != null) {
             visible = userDto.getVisible();
         }
+
+        if (userDto.getNotation() != null) {
+            notation = userDto.getNotation();
+        }
+
+        if (userDto.getBirthday() != null) {
+            birthday = userDto.getBirthday();
+        }
+
+        if (userDto.getGenderId() != null) {
+            genderId = userDto.getGenderId();
+        }
+
+        if (userDto.getTypeId() != null) {
+            typeId = userDto.getTypeId();
+        }
         return this;
     }
 
@@ -100,6 +134,9 @@ public class UserEntity {
 
     public boolean equalsEmail(String anotherEmail) {
         return this.email.equals(anotherEmail);
+    }
+    public void changeUserRole(Integer role) {
+        this.typeId = role;
     }
 }
 

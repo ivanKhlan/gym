@@ -2,6 +2,7 @@ package ua.vixdev.gym.user.base;
 
 import ua.vixdev.gym.user.entity.UserEntity;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -18,7 +19,11 @@ public abstract class UserEntityData {
                 "vholvetskyi@gmail.com",
                 "passW00r-D$4d",
                 "+3809846432",
-                true
+                true,
+                "some text",
+                ("2001-1-1"),
+                1,
+                1
         );
     }
 
@@ -29,7 +34,11 @@ public abstract class UserEntityData {
                 "vholvetskyi@gmail.com",
                 "pass",
                 "+3809846432",
-                true
+                true,
+                "some text",
+                ("2001-1-1"),
+                1,
+                1
         );
         user.setId(1L);
         return user;
@@ -42,7 +51,11 @@ public abstract class UserEntityData {
                 "vholvetskyi@gmail.com",
                 "pass",
                 "+3809846432",
-                true
+                true,
+                "some text",
+                ("2001-1-1"),
+                1,
+                1
         ));
     }
 

@@ -96,6 +96,14 @@ public class UserServiceImpl implements UserService {
         log.info("Update user visibility for user with ID {} to: {}", id, visible);
     }
 
+    @Transactional
+    @Override
+    public void updateUserRole(Long id, Integer role) {
+        var user = findUserById(id);
+        user.changeUserRole(role);
+        log.info("Update user role for user with ID {} to: {}", id, role);
+    }
+
     private UserEntity updateUserFields(UserEntity loadUser, UserDto userDto) {
         var updatedUser = loadUser.updateFields(userDto);
         log.info("Updated user with ID: {}", updatedUser.getId());

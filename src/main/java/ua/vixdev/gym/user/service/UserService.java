@@ -22,4 +22,5 @@ public interface UserService {
     UserEntity updateUser(Long id, UserDto userDto);
     void deleteUserById(Long id);
     void updateUserVisibility(Long id, String visible);
+    void updateUserRole(Long id, Integer role);
 }

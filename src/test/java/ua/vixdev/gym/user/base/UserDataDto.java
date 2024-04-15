@@ -17,7 +17,11 @@ public abstract class UserDataDto {
                 "vholvetskyi@gmail.com",
                 "passW00r-D$4d",
                 "+380984643287",
-                true
+                true,
+                "some text",
+                ("2001-1-1"),
+                1,
+                1
         );
     }
 
@@ -28,7 +32,11 @@ public abstract class UserDataDto {
                 "vholvetskyi@gmail.com",
                 "passwo_rD-877",
                 "+380984643278",
-                true
+                true,
+                "some text",
+                ("2001-1-1"),
+                1,
+                1
         );
     }
 }

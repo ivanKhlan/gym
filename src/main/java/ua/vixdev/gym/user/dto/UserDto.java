@@ -33,6 +33,11 @@ public class UserDto {
     private String phoneNumber;
     private Boolean visible;
 
+    private String notation;
+    private String birthday;
+    private Integer genderId;
+    private Integer typeId;
+
     public UserEntity toUserEntity() {
         return new UserEntity(
                 firstName,
@@ -40,7 +45,11 @@ public class UserDto {
                 email,
                 password,
                 phoneNumber,
-                visible
+                visible,
+                notation,
+                birthday,
+                genderId,
+                typeId
         );
     }
 }
