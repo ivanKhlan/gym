@@ -18,18 +18,6 @@ import java.sql.Timestamp;
 @Table(name = "options")
 @EntityListeners(AuditingEntityListener.class)
 public class Options {
-    /**
-CREATE TABLE `options` (
-    `id` SERIAL PRIMARY KEY,
-    `autoload` BOOLEAN DEFAULT 1,
-    `key` VARCHAR(70) NOT NULL,
-    `value` TEXT NULL,
-    `visible` BOOLEAN DEFAULT 1,
-    `created_at` TIMESTAMP DEFAULT NOW(),
-    `updated_at` TIMESTAMP DEFAULT NOW(),
-    `deleted_at` TIMESTAMP DEFAULT NULL
-);
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

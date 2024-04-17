@@ -23,7 +23,7 @@ public class OptionController {
     private final OptionService optionService;
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/all")
+    @GetMapping()
     List<Options> getAllOptions(){
         return optionService.findAllOptions();
     }
@@ -50,8 +50,7 @@ public class OptionController {
                                            @RequestBody Map<String, String> body) {
 
         var visible = body.get("visible");
-        if (StringUtils.isNotBlank(visible)
-                && (StringUtils.equalsIgnoreCase(visible, "true") ||
+        if ((StringUtils.equalsIgnoreCase(visible, "true") ||
                 StringUtils.equalsIgnoreCase(visible, "false"))) {
             visible = visible.toLowerCase();
             optionService.updateOptionVisibility(id, visible);

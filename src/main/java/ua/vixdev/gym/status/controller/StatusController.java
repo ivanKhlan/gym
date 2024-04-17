@@ -25,7 +25,7 @@ public class StatusController {
     private final StatusService statusService;
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/all")
+    @GetMapping()
     List<Status> getAllStatuses() {
         return statusService.findAllStatuses();
     }
@@ -53,8 +53,7 @@ public class StatusController {
                                            @RequestBody Map<String, String> body) {
 
         var visible = body.get("visible");
-        if (StringUtils.isNotBlank(visible)
-                && (StringUtils.equalsIgnoreCase(visible, "true") ||
+        if ((StringUtils.equalsIgnoreCase(visible, "true") ||
                 StringUtils.equalsIgnoreCase(visible, "false"))) {
             visible = visible.toLowerCase();
             statusService.updateStatusVisibility(id, visible);

@@ -19,17 +19,6 @@ import java.sql.Timestamp;
 @EntityListeners(AuditingEntityListener.class)
 public class Status {
 
-    /**
-CREATE TABLE `status` (
-    `id` SERIAL PRIMARY KEY,
-    `value` VARCHAR(70) NOT NULL ,
-    `visible` BOOLEAN DEFAULT 1,
-    `created_at` TIMESTAMP DEFAULT NOW(),
-    `updated_at` TIMESTAMP DEFAULT NOW(),
-    `deleted_at` TIMESTAMP DEFAULT NULL
-);
-);
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
