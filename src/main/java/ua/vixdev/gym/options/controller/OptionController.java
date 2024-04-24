@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ua.vixdev.gym.options.dto.OptionDto;
-import ua.vixdev.gym.options.entity.Options;
+import ua.vixdev.gym.options.entity.OptionEntity;
 import ua.vixdev.gym.options.exceptions.OptionVisibleException;
 import ua.vixdev.gym.options.service.OptionService;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +24,12 @@ public class OptionController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping()
-    List<Options> getAllOptions(){
+    List<OptionEntity> getAllOptions(){
         return optionService.findAllOptions();
     }
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
-    Options findUserById(@PathVariable Long id) {
+    OptionEntity findUserById(@PathVariable Long id) {
         return optionService.findOptionById(id);
     }
 

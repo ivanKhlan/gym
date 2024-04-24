@@ -22,8 +22,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.vixdev.gym.dto.ApplicationDto;
-import ua.vixdev.gym.service.ApplicationService;
+import ua.vixdev.gym.application.controller.ApplicationController;
+import ua.vixdev.gym.application.controller.dto.ApplicationDto;
+import ua.vixdev.gym.application.service.ApplicationService;
 
 /**
  * Unit tests for {@link ApplicationController} class.

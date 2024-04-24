@@ -9,12 +9,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.vixdev.gym.dto.RequestCategoryDto;
-import ua.vixdev.gym.entity.CategoryEntity;
+import ua.vixdev.gym.category.controller.dto.CategoryController;
+import ua.vixdev.gym.category.controller.dto.RequestCategoryDto;
+import ua.vixdev.gym.category.entity.CategoryEntity;
 import ua.vixdev.gym.exception.CategoryLengthTooLong;
-import ua.vixdev.gym.factory.ResponseCategoryDtoFactory;
-import ua.vixdev.gym.service.CategoryService;
-import ua.vixdev.gym.utils.CategoryValidationHelper;
+import ua.vixdev.gym.category.controller.dto.ResponseCategoryDtoFactory;
+import ua.vixdev.gym.category.service.CategoryService;
+import commons.config.utils.CategoryValidationHelper;
 
 import java.time.Instant;
 import java.util.List;

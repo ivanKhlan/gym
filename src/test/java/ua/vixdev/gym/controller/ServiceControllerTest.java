@@ -7,9 +7,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import service.controller.ServiceController;
-import service.dto.ServiceDto;
-import service.services.ServicesService;
+import ua.vixdev.gym.service.controller.ServiceController;
+import ua.vixdev.gym.service.dto.ServiceDto;
+import ua.vixdev.gym.service.services.ServicesService;
 
 import java.util.Collections;
 import java.util.List;

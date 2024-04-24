@@ -8,15 +8,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import ua.vixdev.gym.reset_password.entity.ResetPasswordToken;
-import ua.vixdev.gym.reset_password.repository.ResetPasswordTokenRepository;
+import ua.vixdev.gym.security.reset.entity.ResetPasswordToken;
+import ua.vixdev.gym.security.reset.repository.ResetPasswordTokenRepository;
+import ua.vixdev.gym.security.reset.services.ResetTokenService;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ResetTokenServiceTest {

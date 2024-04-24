@@ -15,11 +15,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.vixdev.gym.dto.ApplicationDto;
-import ua.vixdev.gym.entity.Application;
+import ua.vixdev.gym.application.controller.dto.ApplicationDto;
+import ua.vixdev.gym.application.entity.Application;
+import ua.vixdev.gym.application.service.ApplicationService;
 import ua.vixdev.gym.exception.ApplicationNotFoundException;
-import ua.vixdev.gym.mapper.ApplicationMapper;
-import ua.vixdev.gym.repository.ApplicationRepository;
+import ua.vixdev.gym.application.mapper.ApplicationMapper;
+import ua.vixdev.gym.application.repository.ApplicationRepository;
 
 /**
  * Unit tests for {@link ApplicationService} class.

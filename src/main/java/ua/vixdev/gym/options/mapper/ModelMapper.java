@@ -1,7 +1,7 @@
 package ua.vixdev.gym.options.mapper;
 
-import ua.vixdev.gym.options.entity.Options;
+import ua.vixdev.gym.options.entity.OptionEntity;
 
 public interface ModelMapper {
-    Options fromDto();
+    OptionEntity fromDto();
 }

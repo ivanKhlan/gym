@@ -10,15 +10,16 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import ua.vixdev.gym.reset_password.dto.NewPasswordRequest;
-import ua.vixdev.gym.reset_password.dto.ResetPasswordRequest;
-import ua.vixdev.gym.reset_password.entity.ResetPasswordToken;
+import ua.vixdev.gym.security.reset.controller.dto.NewPasswordRequest;
+import ua.vixdev.gym.security.reset.controller.dto.ResetPasswordRequest;
+import ua.vixdev.gym.security.reset.entity.ResetPasswordToken;
+import ua.vixdev.gym.security.reset.services.ResetPasswordEmailService;
+import ua.vixdev.gym.security.reset.services.ResetTokenService;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.repository.UserRepository;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
@@ -34,7 +35,7 @@ class ResetPasswordServiceTest {
     private JavaMailSender emailSender;
 
     @InjectMocks
-    private ResetPasswordService resetPasswordService;
+    private ResetPasswordEmailService resetPasswordService;
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);

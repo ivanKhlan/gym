@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static ua.vixdev.gym.utils.FieldPatterns.PASSWORD_PATTERN;
+import static ua.vixdev.gym.commons.utils.FieldPatterns.PASSWORD_PATTERN;
 
 /**
  * @author Volodymyr Holovetskyi

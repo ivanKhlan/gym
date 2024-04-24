@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import static ua.vixdev.gym.utils.FieldPatterns.*;
+import static ua.vixdev.gym.commons.utils.FieldPatterns.*;
 
 /**
  * @author Volodymyr Holovetskyi

@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.vixdev.gym.option.entity.OptionDtoData;
 import ua.vixdev.gym.option.entity.OptionEntityData;
 import ua.vixdev.gym.options.dto.OptionDto;
-import ua.vixdev.gym.options.entity.Options;
+import ua.vixdev.gym.options.entity.OptionEntity;
 import ua.vixdev.gym.options.exceptions.OptionNotFoundException;
 import ua.vixdev.gym.options.repository.OptionsRepository;
 import ua.vixdev.gym.options.service.OptionServiceImpl;
@@ -33,10 +33,10 @@ public class OptionServiceTest {
     //list status
     @Test
     void should_return_all_options() {
-        List<Options> options = OptionEntityData.getListOfOption();
+        List<OptionEntity> options = OptionEntityData.getListOfOption();
 
         when(optionsRepository.findAll()).thenReturn(options);
-        List<Options> expected = optionService.findAllOptions();
+        List<OptionEntity> expected = optionService.findAllOptions();
 
         //then
         assertEquals(expected, options);
@@ -48,25 +48,25 @@ public class OptionServiceTest {
     @Test
     void when_given_id_should_return_option_if_found() {
         //given
-        Options options = OptionEntityData.getSingleOptionWithId();
+        OptionEntity optionEntity = OptionEntityData.getSingleOptionWithId();
 
         //when
-        when(optionsRepository.findById(options.getId())).thenReturn(Optional.of(options));
-        optionService.deleteOptionById(options.getId());
+        when(optionsRepository.findById(optionEntity.getId())).thenReturn(Optional.of(optionEntity));
+        optionService.deleteOptionById(optionEntity.getId());
 
         //then
-        verify(optionsRepository).deleteById(options.getId());
+        verify(optionsRepository).deleteById(optionEntity.getId());
     }
 
     @Test()
     void should_throw_exception_when_option_doesnt_exist() {
         //given
-        Options options = OptionEntityData.getSingleOptionWithId();
+        OptionEntity optionEntity = OptionEntityData.getSingleOptionWithId();
 
         //when
         when(optionsRepository.findById(anyLong())).thenReturn(Optional.empty());
         OptionNotFoundException exception = assertThrows(OptionNotFoundException.class, () ->
-                optionService.deleteOptionById(options.getId()));
+                optionService.deleteOptionById(optionEntity.getId()));
 
         //then
         assertTrue(exception.getMessage().contains("Could not find option with id {1}!"));
@@ -78,11 +78,11 @@ public class OptionServiceTest {
 
         //given
         OptionDto optionDto = OptionDtoData.getSingleOptionDto();
-        Options option = OptionEntityData.getSingleOption();
+        OptionEntity option = OptionEntityData.getSingleOption();
 
         //when
-        when(optionsRepository.save(any(Options.class))).thenReturn(option);
-        Options created = optionService.createOption(optionDto);
+        when(optionsRepository.save(any(OptionEntity.class))).thenReturn(option);
+        OptionEntity created = optionService.createOption(optionDto);
 
         //then
         assertThat(created.getValue()).isSameAs(optionDto.getValue());
@@ -92,9 +92,9 @@ public class OptionServiceTest {
     @Test
     void when_given_id_should_update_option_if_found() {
         //given
-        Options option = OptionEntityData.getSingleOptionWithId();
+        OptionEntity option = OptionEntityData.getSingleOptionWithId();
         OptionDto updateOption = OptionDtoData.getUpdatedOptionDto();
-        Options option1 = updateOption.fromDto();
+        OptionEntity option1 = updateOption.fromDto();
         option1.setId(1L);
 
         //when
@@ -109,7 +109,7 @@ public class OptionServiceTest {
     @Test()
     void should_throw_exception_when_update_option_doesnt_exist() {
         //given
-        Options option = OptionEntityData.getSingleOptionWithId();
+        OptionEntity option = OptionEntityData.getSingleOptionWithId();
 
         //when
         when(optionsRepository.findById(anyLong())).thenReturn(Optional.empty());
@@ -124,7 +124,7 @@ public class OptionServiceTest {
     @Test
     void when_given_id_should_delete_option_if_found() {
         //given
-        Options option = OptionEntityData.getSingleOptionWithId();
+        OptionEntity option = OptionEntityData.getSingleOptionWithId();
 
         //when
         when(optionsRepository.findById(option.getId())).thenReturn(Optional.of(option));
@@ -137,7 +137,7 @@ public class OptionServiceTest {
     @Test()
     void should_throw_exception_when_delete_option_doesnt_exist() {
         //given
-       Options option = OptionEntityData.getSingleOptionWithId();
+       OptionEntity option = OptionEntityData.getSingleOptionWithId();
 
         //when
         when(optionsRepository.findById(anyLong())).thenReturn(Optional.empty());

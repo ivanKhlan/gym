@@ -11,7 +11,7 @@ import ua.vixdev.gym.security.model.UserRole;
 
 import java.util.Set;
 
-import static ua.vixdev.gym.utils.FieldPatterns.*;
+import static ua.vixdev.gym.commons.utils.FieldPatterns.*;
 
 /**
  * @author Volodymyr Holovetskyi

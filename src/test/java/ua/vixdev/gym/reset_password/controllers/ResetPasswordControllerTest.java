@@ -1,8 +1,5 @@
 package ua.vixdev.gym.reset_password.controllers;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,16 +13,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.vixdev.gym.reset_password.dto.NewPasswordRequest;
-import ua.vixdev.gym.reset_password.dto.ResetPasswordRequest;
-import ua.vixdev.gym.reset_password.services.ResetPasswordService;
+import ua.vixdev.gym.security.reset.controller.dto.NewPasswordRequest;
+import ua.vixdev.gym.security.reset.controller.dto.ResetPasswordRequest;
+import ua.vixdev.gym.security.reset.services.ResetPasswordEmailService;
+import ua.vixdev.gym.security.reset.controller.ResetPasswordEmailController;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = ResetPasswordController.class)
+@WebMvcTest(controllers = ResetPasswordEmailController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 class ResetPasswordControllerTest {
@@ -33,9 +31,9 @@ class ResetPasswordControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private ResetPasswordService resetPasswordService;
+    private ResetPasswordEmailService resetPasswordService;
     @InjectMocks
-    private ResetPasswordController resetPasswordController;
+    private ResetPasswordEmailController resetPasswordController;
     @Autowired
     private ObjectMapper objectMapper;
 

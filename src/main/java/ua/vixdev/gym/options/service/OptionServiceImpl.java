@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.vixdev.gym.options.dto.OptionDto;
-import ua.vixdev.gym.options.entity.Options;
+import ua.vixdev.gym.options.entity.OptionEntity;
 import ua.vixdev.gym.options.exceptions.OptionAlreadyExists;
 import ua.vixdev.gym.options.exceptions.OptionNotFoundException;
 import ua.vixdev.gym.options.repository.OptionsRepository;
@@ -19,27 +19,27 @@ public class OptionServiceImpl implements OptionService {
     private final OptionsRepository optionsRepository;
 
     @Override
-    public Options findByKey(String key) {
+    public OptionEntity findByKey(String key) {
         return optionsRepository.findByKey(key).orElse(null);
     }
 
     @Override
-    public List<Options> findAllByValue(String value) {
+    public List<OptionEntity> findAllByValue(String value) {
         return printLogInfo(optionsRepository.findAllByValue(value));
     }
 
     @Override
-    public List<Options> findAllOptions() {
+    public List<OptionEntity> findAllOptions() {
         return printLogInfo(optionsRepository.findAll());
     }
 
     @Override
-    public List<Options> findOptionsByVisible(boolean visible) {
+    public List<OptionEntity> findOptionsByVisible(boolean visible) {
         return printLogInfo(optionsRepository.findAllByVisible(visible));
     }
 
     @Override
-    public Options findOptionById(Long id) {
+    public OptionEntity findOptionById(Long id) {
         var loadOption = optionsRepository.findById(id);
         log.info("Loaded option with ID: {}", id);
 
@@ -52,9 +52,9 @@ public class OptionServiceImpl implements OptionService {
 
     @Transactional
     @Override
-    public Options createOption(OptionDto optionDto) {
+    public OptionEntity createOption(OptionDto optionDto) {
         var optionEntity = optionDto.fromDto();
-        Options savedOption = optionsRepository.save(optionEntity);
+        OptionEntity savedOption = optionsRepository.save(optionEntity);
         log.info("Saved option: {}", savedOption);
         return savedOption;
 
@@ -62,7 +62,7 @@ public class OptionServiceImpl implements OptionService {
 
     @Transactional
     @Override
-    public Options updateOption(Long id, OptionDto updateOptionDto) {
+    public OptionEntity updateOption(Long id, OptionDto updateOptionDto) {
         var loadOption = findOptionById(id);
         checkIfKeyAlreadyExists(updateOptionDto.getKey());
         return updateOptionFields(loadOption, updateOptionDto);
@@ -83,7 +83,7 @@ public class OptionServiceImpl implements OptionService {
         log.info("For a option with ID {}, the visibility has been changed to: {}", id, visible);
     }
 
-    private Options updateOptionFields(Options loadOption, OptionDto optionDto) {
+    private OptionEntity updateOptionFields(OptionEntity loadOption, OptionDto optionDto) {
         var updatedOption = loadOption.updateFields(optionDto);
         log.info("Updated option: {}", updatedOption);
         return updatedOption;
@@ -97,7 +97,7 @@ public class OptionServiceImpl implements OptionService {
 
     }
 
-    private List<Options> printLogInfo(List<Options> options) {
+    private List<OptionEntity> printLogInfo(List<OptionEntity> options) {
         log.info("Size of loaded options from database: {}", options.size());
         return options;
     }

@@ -15,7 +15,7 @@ import ua.vixdev.gym.upload.mapper.FileMapper;
 import ua.vixdev.gym.upload.repository.FilesRepository;
 import ua.vixdev.gym.upload.repository.FolderTypesRepository;
 import ua.vixdev.gym.upload.service.FileService;
-import ua.vixdev.gym.upload.utils.HashingUtil;
+import ua.vixdev.gym.commons.utils.HashingUtil;
 import ua.vixdev.gym.upload.validation.FileValidation;
 
 import java.io.IOException;

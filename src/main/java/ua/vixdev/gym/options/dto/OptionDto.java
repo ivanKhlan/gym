@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ua.vixdev.gym.options.entity.Options;
+import ua.vixdev.gym.options.entity.OptionEntity;
 import ua.vixdev.gym.options.mapper.ModelMapper;
 @Data
 @AllArgsConstructor
@@ -18,8 +18,8 @@ public class OptionDto implements ModelMapper {
     private boolean visible;
     private boolean autoload;
     @Override
-    public Options fromDto() {
-        return new Options(
+    public OptionEntity fromDto() {
+        return new OptionEntity(
                 autoload,
                 key,
                 value,

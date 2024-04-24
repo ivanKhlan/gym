@@ -1,14 +1,13 @@
 package ua.vixdev.gym;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ua.vixdev.gym.controller.AccountController;
-import ua.vixdev.gym.model.Account;
-import ua.vixdev.gym.repo.AccountRepo;
+import ua.vixdev.gym.account.controller.AccountController;
+import ua.vixdev.gym.account.entity.AccountEntity;
+import ua.vixdev.gym.account.repositroy.AccountRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,45 +24,45 @@ class GymApplicationTests {
     private AccountController accountController;
 
     @Mock
-    private AccountRepo accountRepo;
+    private AccountRepository accountRepository;
 
     @Test
     public void testGetAllAccount() {
         // Arrange
-        List<Account> mockAccountList = Arrays.asList(new Account(), new Account());
-        when(accountRepo.findAll()).thenReturn(mockAccountList);
+        List<AccountEntity> mockAccountListEntity = Arrays.asList(new AccountEntity(), new AccountEntity());
+        when(accountRepository.findAll()).thenReturn(mockAccountListEntity);
 
         // Act
-        ResponseEntity<List<Account>> responseEntity = accountController.getAllAccount();
+        ResponseEntity<List<AccountEntity>> responseEntity = accountController.getAllAccount();
 
         // Assert
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(mockAccountList, responseEntity.getBody());
+        assertEquals(mockAccountListEntity, responseEntity.getBody());
     }
 
     @Test
     public void testGetAccountById() {
         // Arrange
         Long accountId = 1L;
-        Account mockAccount = new Account();
-        when(accountRepo.findById(accountId)).thenReturn(Optional.of(mockAccount));
+        AccountEntity mockAccountEntity = new AccountEntity();
+        when(accountRepository.findById(accountId)).thenReturn(Optional.of(mockAccountEntity));
 
         // Act
-        ResponseEntity<Account> responseEntity = accountController.getAccountById(accountId);
+        ResponseEntity<AccountEntity> responseEntity = accountController.getAccountById(accountId);
 
         // Assert
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(mockAccount, responseEntity.getBody());
+        assertEquals(mockAccountEntity, responseEntity.getBody());
     }
 
     @Test
     public void testGetAccountByIdNotFound() {
         // Arrange
         Long accountId = 1L;
-        when(accountRepo.findById(accountId)).thenReturn(Optional.empty());
+        when(accountRepository.findById(accountId)).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<Account> responseEntity = accountController.getAccountById(accountId);
+        ResponseEntity<AccountEntity> responseEntity = accountController.getAccountById(accountId);
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -72,42 +71,42 @@ class GymApplicationTests {
     @Test
     public void testAddAccount() {
         // Arrange
-        Account mockAccount = new Account();
-        when(accountRepo.save(any(Account.class))).thenReturn(mockAccount);
+        AccountEntity mockAccountEntity = new AccountEntity();
+        when(accountRepository.save(any(AccountEntity.class))).thenReturn(mockAccountEntity);
 
         // Act
-        ResponseEntity<Account> responseEntity = accountController.addAccount(mockAccount);
+        ResponseEntity<AccountEntity> responseEntity = accountController.addAccount(mockAccountEntity);
 
         // Assert
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(mockAccount, responseEntity.getBody());
+        assertEquals(mockAccountEntity, responseEntity.getBody());
     }
 
     @Test
     public void testUpdateAccountById() {
         // Arrange
         Long accountId = 1L;
-        Account existingAccount = new Account();
-        existingAccount.setId(accountId);
-        when(accountRepo.findById(accountId)).thenReturn(Optional.of(existingAccount));
-        when(accountRepo.save(any(Account.class))).thenReturn(existingAccount);
+        AccountEntity existingAccountEntity = new AccountEntity();
+        existingAccountEntity.setId(accountId);
+        when(accountRepository.findById(accountId)).thenReturn(Optional.of(existingAccountEntity));
+        when(accountRepository.save(any(AccountEntity.class))).thenReturn(existingAccountEntity);
 
         // Act
-        ResponseEntity<Account> responseEntity = accountController.updateAccountById(accountId, new Account());
+        ResponseEntity<AccountEntity> responseEntity = accountController.updateAccountById(accountId, new AccountEntity());
 
         // Assert
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(existingAccount, responseEntity.getBody());
+        assertEquals(existingAccountEntity, responseEntity.getBody());
     }
 
     @Test
     public void testUpdateAccountByIdNotFound() {
         // Arrange
         Long accountId = 1L;
-        when(accountRepo.findById(accountId)).thenReturn(Optional.empty());
+        when(accountRepository.findById(accountId)).thenReturn(Optional.empty());
 
         // Act
-        ResponseEntity<Account> responseEntity = accountController.updateAccountById(accountId, new Account());
+        ResponseEntity<AccountEntity> responseEntity = accountController.updateAccountById(accountId, new AccountEntity());
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -123,7 +122,7 @@ class GymApplicationTests {
 
         // Assert
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        verify(accountRepo, times(1)).deleteById(accountId);
+        verify(accountRepository, times(1)).deleteById(accountId);
     }
 
 }
