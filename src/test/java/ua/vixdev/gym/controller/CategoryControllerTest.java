@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.vixdev.gym.dto.RequestCategoryDto;
 import ua.vixdev.gym.entity.CategoryEntity;
 import ua.vixdev.gym.exception.CategoryLengthTooLong;
+import ua.vixdev.gym.factory.ResponseCategoryDtoFactory;
 import ua.vixdev.gym.service.CategoryService;
 import ua.vixdev.gym.utils.CategoryValidationHelper;
 
@@ -21,8 +22,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,6 +43,9 @@ class CategoryControllerTest {
     @MockBean
     CategoryValidationHelper categoryValidationHelper;
 
+    @MockBean
+    ResponseCategoryDtoFactory responseCategoryDtoFactory;
+
     private static final String END_POINT = "/category/";
 
     private CategoryEntity categoryEntity;
@@ -54,8 +57,9 @@ class CategoryControllerTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    // retrieves all categories
     @Test
-    void getAllCategoryEntities() throws Exception {
+    void getAllCategoryEntities_Success() throws Exception {
         List<CategoryEntity> categoryEntities = List.of(categoryEntity, categoryEntity, categoryEntity);
 
         when(categoryService.findAllCategoryEntities()).thenReturn(categoryEntities);
@@ -67,8 +71,9 @@ class CategoryControllerTest {
                 .andReturn();
     }
 
+    // get category by id
     @Test
-    void getCategoryById() throws Exception {
+    void getCategoryById_Success() throws Exception {
         Optional<CategoryEntity> optionalCategoryEntity = Optional.of(categoryEntity);
 
         when(categoryService.findCategoryEntityById(1L)).thenReturn(optionalCategoryEntity);
@@ -80,6 +85,7 @@ class CategoryControllerTest {
                 .andReturn();
     }
 
+    // create category
     @Test
     void createCategory_Success() throws Exception {
         RequestCategoryDto requestCategoryDto = new RequestCategoryDto("test", true, Instant.now(), Instant.now(), null);
@@ -94,23 +100,24 @@ class CategoryControllerTest {
                 .andExpect(content().string("category with id: 1 was created"));
     }
 
+    // category description (value) is too long
     @Test
     void createCategory_DescriptionTooLong() throws Exception {
         String longDescription = "a".repeat(71);
         RequestCategoryDto requestCategoryDto = new RequestCategoryDto(longDescription, true, Instant.now(), Instant.now(), null);
 
+        doThrow(new CategoryLengthTooLong("length of category description is too long"))
+                .when(categoryValidationHelper).checkCategoryValueLength(requestCategoryDto);
+
         mockMvc.perform(post(END_POINT)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestCategoryDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> {
-                    assert result.getResolvedException() instanceof CategoryLengthTooLong;
-                    assert "length of category description is too long".equals(result.getResolvedException().getMessage());
-                });
+                .andExpect(status().isBadRequest());
     }
 
+    // updates category
     @Test
-    void updateCategoryEntity() throws Exception {
+    void updateCategoryEntity_Success() throws Exception {
         Long categoryId = 1L;
         RequestCategoryDto requestCategoryDto = new RequestCategoryDto("test", true, Instant.now(), Instant.now(), null);
         CategoryEntity categoryEntity = new CategoryEntity(categoryId, "test", true, Instant.now(), Instant.now(), null);
@@ -127,6 +134,7 @@ class CategoryControllerTest {
 
     }
 
+    // deletes category
     @Test
     void deleteCategoryEntityById_Success() throws Exception {
         Long categoryId = 1L;

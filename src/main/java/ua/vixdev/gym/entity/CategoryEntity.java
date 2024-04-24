@@ -24,10 +24,10 @@ public class CategoryEntity {
     private Boolean visible = true;
 
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt = Instant.now();
+    private Instant createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt = Instant.now();
+    private Instant updatedAt;
 
     @Column(name = "deleted_at")
     private Instant deletedAt;
@@ -44,11 +44,6 @@ public class CategoryEntity {
     @PrePersist
     public void onCreate() {
         this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
-    }
-
-    @PreUpdate
-    public void onUpdate() {
         this.updatedAt = Instant.now();
     }
 }
