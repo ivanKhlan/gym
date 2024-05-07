@@ -13,14 +13,13 @@ import java.util.List;
 @Data
 @Entity
 @Builder
-@Table(name = "folder_types", schema = "public")
+@Table(name = "folder_types")
 @NoArgsConstructor
 @AllArgsConstructor
 public class FolderTypesEntity {
 
     @Id
-    @SequenceGenerator(name = "folder_types_id_seq", sequenceName = "folder_types_id_seq")
-    @GeneratedValue(generator = "folder_types_id_seq", strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Size(max = 70, message = "Title length should be less then 70 symbols length.")

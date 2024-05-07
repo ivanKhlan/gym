@@ -10,10 +10,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.vixdev.gym.category.controller.dto.CategoryController;
-import ua.vixdev.gym.category.controller.dto.RequestCategoryDto;
+import ua.vixdev.gym.category.controller.dto.CategoryDto;
 import ua.vixdev.gym.category.entity.CategoryEntity;
-import ua.vixdev.gym.exception.CategoryLengthTooLong;
-import ua.vixdev.gym.category.controller.dto.ResponseCategoryDtoFactory;
 import ua.vixdev.gym.category.service.CategoryService;
 import commons.config.utils.CategoryValidationHelper;
 
@@ -63,7 +61,7 @@ class CategoryControllerTest {
     void getAllCategoryEntities_Success() throws Exception {
         List<CategoryEntity> categoryEntities = List.of(categoryEntity, categoryEntity, categoryEntity);
 
-        when(categoryService.findAllCategoryEntities()).thenReturn(categoryEntities);
+        when(categoryService.findAll()).thenReturn(categoryEntities);
 
         mockMvc.perform(get(END_POINT)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -77,7 +75,7 @@ class CategoryControllerTest {
     void getCategoryById_Success() throws Exception {
         Optional<CategoryEntity> optionalCategoryEntity = Optional.of(categoryEntity);
 
-        when(categoryService.findCategoryEntityById(1L)).thenReturn(optionalCategoryEntity);
+        when(categoryService.findById(1L)).thenReturn(optionalCategoryEntity);
 
         mockMvc.perform(get(END_POINT + "1/")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -89,14 +87,14 @@ class CategoryControllerTest {
     // create category
     @Test
     void createCategory_Success() throws Exception {
-        RequestCategoryDto requestCategoryDto = new RequestCategoryDto("test", true, Instant.now(), Instant.now(), null);
+        CategoryDto categoryDto = new CategoryDto("test", true, Instant.now(), Instant.now(), null);
 
-        when(categoryService.saveCategoryEntity(any(CategoryEntity.class)))
+        when(categoryService.updateCategory(any(CategoryEntity.class)))
                 .thenReturn(categoryEntity);
 
         mockMvc.perform(post(END_POINT)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestCategoryDto)))
+                        .content(objectMapper.writeValueAsString(categoryDto)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("category with id: 1 was created"));
     }
@@ -105,14 +103,14 @@ class CategoryControllerTest {
     @Test
     void createCategory_DescriptionTooLong() throws Exception {
         String longDescription = "a".repeat(71);
-        RequestCategoryDto requestCategoryDto = new RequestCategoryDto(longDescription, true, Instant.now(), Instant.now(), null);
+        CategoryDto categoryDto = new CategoryDto(longDescription, true, Instant.now(), Instant.now(), null);
 
         doThrow(new CategoryLengthTooLong("length of category description is too long"))
-                .when(categoryValidationHelper).checkCategoryValueLength(requestCategoryDto);
+                .when(categoryValidationHelper).checkCategoryValueLength(categoryDto);
 
         mockMvc.perform(post(END_POINT)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestCategoryDto)))
+                        .content(objectMapper.writeValueAsString(categoryDto)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -120,16 +118,16 @@ class CategoryControllerTest {
     @Test
     void updateCategoryEntity_Success() throws Exception {
         Long categoryId = 1L;
-        RequestCategoryDto requestCategoryDto = new RequestCategoryDto("test", true, Instant.now(), Instant.now(), null);
+        CategoryDto categoryDto = new CategoryDto("test", true, Instant.now(), Instant.now(), null);
         CategoryEntity categoryEntity = new CategoryEntity(categoryId, "test", true, Instant.now(), Instant.now(), null);
 
 
-        when(categoryService.findCategoryEntityById(categoryId)).thenReturn(Optional.of(categoryEntity));
-        when(categoryService.saveCategoryEntity(any(CategoryEntity.class))).thenReturn(categoryEntity);
+        when(categoryService.findById(categoryId)).thenReturn(Optional.of(categoryEntity));
+        when(categoryService.updateCategory(any(CategoryEntity.class))).thenReturn(categoryEntity);
 
         mockMvc.perform(put(END_POINT + "{id}/", categoryId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestCategoryDto)))
+                        .content(objectMapper.writeValueAsString(categoryDto)))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("category with id: " + categoryId + " was successfully updated")));
 
@@ -141,8 +139,8 @@ class CategoryControllerTest {
         Long categoryId = 1L;
         CategoryEntity categoryEntity = new CategoryEntity(categoryId, "test", true, Instant.now(), Instant.now(), null);
 
-        when(categoryService.findCategoryEntityById(categoryId)).thenReturn(Optional.of(categoryEntity));
-        doNothing().when(categoryService).deleteCategoryEntityById(categoryId);
+        when(categoryService.findById(categoryId)).thenReturn(Optional.of(categoryEntity));
+        doNothing().when(categoryService).deleteById(categoryId);
 
         mockMvc.perform(delete(END_POINT + "{id}/", categoryId))
                 .andExpect(status().isOk())

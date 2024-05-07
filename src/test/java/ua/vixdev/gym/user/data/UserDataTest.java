@@ -1,8 +1,7 @@
 package ua.vixdev.gym.user.data;
 
 import ua.vixdev.gym.security.model.UserRole;
-import ua.vixdev.gym.user.controller.dto.CreateUserDto;
-import ua.vixdev.gym.user.controller.dto.UpdateUserDto;
+import ua.vixdev.gym.user.controller.dto.UserDto;
 import ua.vixdev.gym.user.entity.UserEntity;
 
 import java.util.List;
@@ -16,8 +15,8 @@ import java.util.Set;
 public abstract class UserDataTest {
 
 
-    public static CreateUserDto getCreateUserDto() {
-        return new CreateUserDto(
+    public static UserDto getCreateUserDto() {
+        return new UserDto(
                 "Volodymyr",
                 "Holovetskyi",
                 "vholvetskyi@gmail.com",

@@ -3,6 +3,7 @@ package ua.vixdev.gym.security.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,12 +34,17 @@ public class UserEntityDetailsService implements UserDetailsService {
                     userEntity.getPassword(),
                     userEntity.getRoles()
                             .stream()
-                            .map(userRole -> (GrantedAuthority) userRole::name)
+                            .map(userRole -> new SimpleGrantedAuthority(getRole(userRole.getValue())))
                             .toList());
             userDetails.setId(userEntity.getId());
             return userDetails;
         }
         log.warn("User with id: {}, not found", username);
         throw new UsernameNotFoundException("User with id: %s, not found".formatted(username));
+    }
+
+    private String getRole(String role) {
+        String[] splitRole = role.split("_");
+        return splitRole[1];
     }
 }

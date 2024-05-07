@@ -45,7 +45,7 @@ class ResetPasswordServiceTest {
         ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest("example@example.com");
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail("example@example.com");
-        when(userRepository.findByEmailAddress("example@example.com")).thenReturn(Optional.of(userEntity));
+        when(userRepository.findByEmail("example@example.com")).thenReturn(Optional.of(userEntity));
         ResetPasswordToken resetPasswordToken = new ResetPasswordToken();
         resetPasswordToken.setTokenBody("testToken");
         when(resetTokenService.generateToken("example@example.com")).thenReturn(resetPasswordToken);
@@ -58,7 +58,7 @@ class ResetPasswordServiceTest {
     @Test
     void sendEmail_UserNotFound_ExceptionThrown() {
         ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest("example@example.com");
-        when(userRepository.findByEmailAddress("example@example.com")).thenReturn(Optional.empty());
+        when(userRepository.findByEmail("example@example.com")).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> resetPasswordService.sendEmail(resetPasswordRequest));
     }
@@ -87,7 +87,7 @@ class ResetPasswordServiceTest {
         NewPasswordRequest newPasswordRequest = new NewPasswordRequest( "AaBbCcDd1","example@example.com");
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail("example@example.com");
-        when(userRepository.findByEmailAddress("example@example.com")).thenReturn(Optional.of(userEntity));
+        when(userRepository.findByEmail("example@example.com")).thenReturn(Optional.of(userEntity));
 
         // Act
         resetPasswordService.resetPassword(newPasswordRequest);
@@ -100,7 +100,7 @@ class ResetPasswordServiceTest {
     @Test
     void resetPassword_InvalidPassword_ExceptionThrown() {
         NewPasswordRequest newPasswordRequest = new NewPasswordRequest("example@example.com", "short");
-        when(userRepository.findByEmailAddress("example@example.com")).thenReturn(Optional.of(new UserEntity()));
+        when(userRepository.findByEmail("example@example.com")).thenReturn(Optional.of(new UserEntity()));
 
         assertThrows(IllegalArgumentException.class, () -> resetPasswordService.resetPassword(newPasswordRequest));
     }

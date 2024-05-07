@@ -3,17 +3,14 @@ package ua.vixdev.gym.status.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.vixdev.gym.status.dto.StatusDto;
-import ua.vixdev.gym.status.entity.Status;
-import ua.vixdev.gym.status.exceptions.StatusVisibleException;
+import ua.vixdev.gym.status.entity.StatusEntity;
 import ua.vixdev.gym.status.service.StatusService;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,46 +18,29 @@ import java.util.Map;
 @RequestMapping(value = "/status")
 public class StatusController {
 
-
+    private static final Long EMPTY_ID = null;
     private final StatusService statusService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping()
-    List<Status> getAllStatuses() {
+    List<StatusEntity> getAllStatuses() {
         return statusService.findAllStatuses();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
-    Status findUserById(@PathVariable Long id) {
+    StatusEntity findUserById(@PathVariable Long id) {
         return statusService.findStatusById(id);
     }
 
     @PostMapping()
-    ResponseEntity<?> createStatus(@RequestBody @Valid StatusDto statusDto) {
-        var status = statusService.createStatus(statusDto);
-        return new ResponseEntity<>(status, HttpStatus.CREATED);
+    StatusEntity createStatus(@RequestBody @Valid StatusDto statusDto) {
+        return statusService.createStatus(mapToStatus(EMPTY_ID, statusDto));
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody @Valid StatusDto statusDto) {
-        var status = statusService.updateStatus(id,statusDto);
-        return new ResponseEntity<>(status, HttpStatus.ACCEPTED);
-    }
-
-    @PatchMapping("/{id}/visible")
-    ResponseEntity<?> updateStatusVisibility(@PathVariable Long id,
-                                           @RequestBody Map<String, String> body) {
-
-        var visible = body.get("visible");
-        if ((StringUtils.equalsIgnoreCase(visible, "true") ||
-                StringUtils.equalsIgnoreCase(visible, "false"))) {
-            visible = visible.toLowerCase();
-            statusService.updateStatusVisibility(id, visible);
-            return ResponseEntity.accepted().build();
-        }
-        log.error("Incorrect data was provided when update the status visibility: {}!", visible);
-        throw new StatusVisibleException(visible);
+    StatusEntity updateStatus(@PathVariable Long id, @RequestBody @Valid StatusDto statusDto) {
+        return statusService.updateStatus(mapToStatus(id, statusDto));
     }
 
     @DeleteMapping("/{id}")
@@ -69,5 +49,11 @@ public class StatusController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
+    private StatusEntity mapToStatus(Long id, StatusDto statusDto) {
+        return StatusEntity.builder()
+                .id(id)
+                .value(statusDto.getValue())
+                .visible(statusDto.isVisible())
+                .build();
+    }
 }

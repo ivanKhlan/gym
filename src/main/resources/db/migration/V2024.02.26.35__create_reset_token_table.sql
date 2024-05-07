@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS reset_password_tokens
+CREATE TABLE IF NOT EXISTS tokens
 (
       id SERIAL PRIMARY KEY,
       token_body VARCHAR(255) NOT NULL,

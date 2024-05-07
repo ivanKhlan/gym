@@ -1,8 +1,10 @@
 package ua.vixdev.gym.options.exceptions;
 
-public class OptionNotFoundException extends RuntimeException{
+import ua.vixdev.gym.commons.excetpion.ResourceNotFoundException;
+
+public class OptionNotFoundException extends ResourceNotFoundException {
     public OptionNotFoundException(Long id) {
-        super("Could not find option with id {" + id + "}!");
+        super("Option with ID: not found!".formatted(id));
     }
 
 }

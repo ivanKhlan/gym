@@ -7,7 +7,7 @@
 
 ## General Info
 
-- The application has two configurations (profiles), dev and prod. Dev is for local development, and prod is for production, so use profile dev when developing locally, logging is also configured for two profiles, for dev logs are written
+- The applicationEntity has two configurations (profiles), dev and prod. Dev is for local development, and prod is for production, so use profile dev when developing locally, logging is also configured for two profiles, for dev logs are written
   to the console (Level DEBUG, if necessary, in the log4j2-dev.xml file, you can change Root level="debug" to Root level="info", to output fewer logs), and on production to a file (Level INFO).
 - A dependency has been added to support docker-compose, so if you have any problems with docker, you can comment out the dependency.
 - So, good luck :)

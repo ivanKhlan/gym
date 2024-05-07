@@ -1,19 +1,53 @@
 package ua.vixdev.gym.options.service;
 
-import ua.vixdev.gym.options.dto.OptionDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.vixdev.gym.options.entity.OptionEntity;
+import ua.vixdev.gym.options.exceptions.OptionAlreadyExists;
+import ua.vixdev.gym.options.exceptions.OptionNotFoundException;
+import ua.vixdev.gym.options.repository.OptionsRepository;
 
 import java.util.List;
 
-public interface OptionService {
-OptionEntity findByKey(String key);
-List<OptionEntity> findAllByValue(String value);
-List<OptionEntity> findAllOptions();
-List<OptionEntity> findOptionsByVisible(boolean visible);
-OptionEntity findOptionById(Long id);
-OptionEntity createOption(OptionDto optionDto);
-OptionEntity updateOption(Long id, OptionDto updateOptionDto);
-void deleteOptionById(Long id);
-void updateOptionVisibility(Long id, String visible);
+@RequiredArgsConstructor
+@Service
+public class OptionService {
+    private final OptionsRepository optionsRepository;
 
+    public List<OptionEntity> findAllOptions() {
+        return optionsRepository.findAll();
+    }
+
+    public OptionEntity findOptionById(Long id) {
+        return optionsRepository.findById(id).orElseThrow(() -> new OptionNotFoundException(id));
+    }
+
+    @Transactional
+    public OptionEntity createOption(OptionEntity option) {
+        validateKeyExists(option.getKey());
+        return optionsRepository.save(option);
+
+    }
+
+    @Transactional
+    public OptionEntity updateOption(OptionEntity option) {
+        validateOptionExists(option.getId());
+        return optionsRepository.save(option);
+    }
+
+    public void deleteOptionById(Long id) {
+        validateOptionExists(id);
+        optionsRepository.deleteById(id);
+    }
+
+
+    private void validateKeyExists(String key) {
+        optionsRepository.findByKey(key).orElseThrow(() -> new OptionAlreadyExists(key));
+    }
+
+    private void validateOptionExists(Long id) {
+        optionsRepository.findById(id).orElseThrow(() -> new OptionNotFoundException(id));
+    }
 }
+

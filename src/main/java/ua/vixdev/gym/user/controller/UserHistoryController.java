@@ -1,39 +1,30 @@
 package ua.vixdev.gym.user.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.vixdev.gym.user.controller.dto.UserHistoryRequest;
-import ua.vixdev.gym.user.controller.dto.UserHistoryResponse;
+import ua.vixdev.gym.user.controller.dto.UserHistoryDto;
 import ua.vixdev.gym.user.entity.UserHistoryEntity;
-import ua.vixdev.gym.user.mapper.UserHistoryMapper;
 import ua.vixdev.gym.user.service.UserHistoryService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/histories")
+@RequestMapping("/userHistories")
 @RequiredArgsConstructor
 public class UserHistoryController {
 
+    private static final Long EMPTY_ID = null;
     private final UserHistoryService userHistoryService;
-    private final UserHistoryMapper userHistoryMapper;
-
 
     /**
      * Retrieves all history changes
      * @return List of history changes
      */
     @GetMapping
-    public ResponseEntity<List<UserHistoryResponse>> getAllHistoryChanges() {
-        List<UserHistoryResponse> response = userHistoryService
-                .getAllHistoryChanges()
-                .stream()
-                .map(userHistoryMapper::makeHistoryChangesDto)
-                .toList();
-
-        return ResponseEntity.ok(response);
+    public List<UserHistoryEntity> findAll() {
+        return userHistoryService.findAll();
     }
 
     /**
@@ -42,41 +33,31 @@ public class UserHistoryController {
      * @return HistoryChangesResponseDto that represents history change
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserHistoryResponse> getHistoryChangeById(@PathVariable Long id) {
-        UserHistoryEntity foundUserHistoryEntity = userHistoryService.getHistoryChangesEntityById(id);
-
-        UserHistoryResponse response = userHistoryMapper.makeHistoryChangesDto(foundUserHistoryEntity);
-
-        return ResponseEntity.ok(response);
+    public UserHistoryEntity findById(@PathVariable Long id) {
+        return userHistoryService.findById(id);
     }
 
     /**
      * Creates history change
-     * @param userHistoryRequest - represents history change
+     * @param userHistoryDto - represents history change
      * @return HistoryChangesResponseDto that represents history change
      */
     @PostMapping
-    public ResponseEntity<UserHistoryResponse> createHistoryChange(@RequestBody UserHistoryRequest userHistoryRequest) {
-        UserHistoryEntity createdHistoryChange = userHistoryService.createHistoryChange(userHistoryRequest);
-
-        UserHistoryResponse response = userHistoryMapper.makeHistoryChangesDto(createdHistoryChange);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserHistoryEntity createUserHistory(@RequestBody @Valid UserHistoryDto userHistoryDto) {
+        return userHistoryService.createUserHistory(mapToUserHistory(EMPTY_ID, userHistoryDto));
     }
 
     /**
      * Updates history change
      * @param id - represents id of history change in database
-     * @param userHistoryRequest - represents history change
+     * @param userHistoryDto - represents history change
      * @return HistoryChangesResponseDto that represents history change
      */
     @PutMapping("/{id}")
-    public ResponseEntity<UserHistoryResponse> updateHistoryChangeDto(@PathVariable Long id, @RequestBody UserHistoryRequest userHistoryRequest) {
-        UserHistoryEntity userHistoryEntity = userHistoryService.updateHistoryChange(id, userHistoryRequest);
-
-        UserHistoryResponse response = userHistoryMapper.makeHistoryChangesDto(userHistoryEntity);
-
-        return ResponseEntity.ok(response);
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public UserHistoryEntity updateUserHistory(@PathVariable Long id, @RequestBody @Valid UserHistoryDto userHistoryDto) {
+        return userHistoryService.updateUserHistory(mapToUserHistory(id, userHistoryDto));
     }
 
     /**
@@ -85,9 +66,16 @@ public class UserHistoryController {
      * @return String as a successful removal
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteHistoryChangeById(@PathVariable Long id) {
-        userHistoryService.deleteHistoryChangeById(id);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable Long id) {
+        userHistoryService.deleteById(id);
+    }
 
-        return ResponseEntity.ok("history change with id '%d' was deleted".formatted(id));
+    private UserHistoryEntity mapToUserHistory(Long id, UserHistoryDto userHistoryDto) {
+        return UserHistoryEntity.builder()
+                .id(id)
+                .userId(userHistoryDto.getUserId())
+                .text(userHistoryDto.getText())
+                .build();
     }
 }

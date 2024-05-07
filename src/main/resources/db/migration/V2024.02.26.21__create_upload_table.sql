@@ -1,6 +1,6 @@
-CREATE TABLE folder_types
+CREATE TABLE folder
 (
-    id         SERIAL PRIMARY KEY,
+    id         SERIAL PRIMARY KEY NOT NULL,
     title      VARCHAR(70) UNIQUE NOT NULL,
     visible    BOOLEAN   DEFAULT true,
     created_at TIMESTAMP NOT NULL,
@@ -9,11 +9,10 @@ CREATE TABLE folder_types
 
 CREATE TABLE files
 (
-    id         SERIAL PRIMARY KEY,
+    id         SERIAL PRIMARY KEY NOT NULL,
     name       VARCHAR(77) NOT NULL,
     visible    BOOLEAN   DEFAULT true,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
-
-    folder_id  INT REFERENCES folder_types(id) NOT NULL
+    folder_id  INT REFERENCES folder(id) NOT NULL
 );

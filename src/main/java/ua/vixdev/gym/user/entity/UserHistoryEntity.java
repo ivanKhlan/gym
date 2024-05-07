@@ -2,6 +2,8 @@ package ua.vixdev.gym.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 /**
@@ -12,7 +14,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Data
-@Table(name = "history_changes", schema = "public")
+@Table(name = "user_history")
+@EntityListeners(AuditingEntityListener.class)
 public class UserHistoryEntity {
 
     @Id
@@ -21,11 +24,12 @@ public class UserHistoryEntity {
     private Long id;
 
     @Column(name = "user_id")
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "text", length = 255)
     private String text;
 
+    @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 }

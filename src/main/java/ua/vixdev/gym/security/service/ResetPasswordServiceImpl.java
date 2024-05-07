@@ -32,9 +32,9 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
             throw new ChangePasswordException();
         }
 
-        final var user = userService.findUserEntityById(id);
+        final var user = userService.findUserById(id);
         final var password = passwordEncoder.encode(changePassword.getPassword());
-        user.changePassword(password);
+        user.addPassword(password);
         log.info("Changing passwords for the User: {}", user.getEmail());
     }
 }

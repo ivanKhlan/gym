@@ -2,6 +2,9 @@ package ua.vixdev.gym.category.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
@@ -10,10 +13,13 @@ import java.time.Instant;
 @Getter
 @Setter
 @AllArgsConstructor
+@Table(name = "categories")
+@Builder
+@EntityListeners(AuditingEntityListener.class)
 public class CategoryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -23,27 +29,14 @@ public class CategoryEntity {
     @Column(name = "visible")
     private Boolean visible = true;
 
+    @CreatedDate
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
     @Column(name = "deleted_at")
     private Instant deletedAt;
-
-
-    public CategoryEntity(String value, Boolean visible, Instant createdAt, Instant updatedAt, Instant deletedAt) {
-        this.value = value;
-        this.visible = visible;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
-    }
-
-    @PrePersist
-    public void onCreate() {
-        this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
-    }
 }

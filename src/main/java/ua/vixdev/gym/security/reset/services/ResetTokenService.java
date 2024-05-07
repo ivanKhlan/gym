@@ -17,7 +17,7 @@ public class ResetTokenService {
     private final UserRepository userRepository;
 
     public ResetPasswordToken generateToken(String email) {
-        UserEntity user = userRepository.findByEmailAddress(email).get();
+        UserEntity user = userRepository.findByEmail(email).get();
         String tokenBody = String.valueOf(user.hashCode());
         LocalDateTime expireAt = LocalDateTime.now().plusHours(24);
 

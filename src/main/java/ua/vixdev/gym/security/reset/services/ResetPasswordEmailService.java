@@ -28,7 +28,7 @@ public class ResetPasswordEmailService {
     private final UserRepository userRepository;
     private final ResetTokenService resetTokenService;
     public void sendEmail(ResetPasswordRequest resetPasswordRequest){
-        Optional<UserEntity> user = userRepository.findByEmailAddress(resetPasswordRequest.getEmail());
+        Optional<UserEntity> user = userRepository.findByEmail(resetPasswordRequest.getEmail());
         if (!user.isEmpty()){
             ResetPasswordToken resetPasswordToken = resetTokenService.generateToken(resetPasswordRequest.getEmail());
             resetTokenService.saveToken(resetPasswordToken);
@@ -54,7 +54,7 @@ public class ResetPasswordEmailService {
          if (violations.isEmpty()){
             boolean isPasswordValid = isNewPasswordValid(newPasswordRequest.getNewPassword());
             if (isPasswordValid) {
-                UserEntity user = userRepository.findByEmailAddress(newPasswordRequest.getEmail()).orElseThrow(() -> new EntityNotFoundException("User not found"));
+                UserEntity user = userRepository.findByEmail(newPasswordRequest.getEmail()).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
                 user.setPassword(newPasswordRequest.getNewPassword());
 

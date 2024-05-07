@@ -12,10 +12,10 @@ import java.sql.Timestamp;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
 @Setter
 @Table(name = "options")
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 public class OptionEntity {
     @Id
@@ -38,32 +38,11 @@ public class OptionEntity {
     @Column(name = "deleted_at")
     private Timestamp deleted_at;
 
-    public OptionEntity(boolean autoload,
-                        String key,
-                        String value,
-                        boolean visible) {
+    public OptionEntity(boolean autoload, String key, String value, boolean visible) {
         this.autoload = autoload;
         this.key = key;
         this.value = value;
         this.visible = visible;
     }
-
-    public void changeVisibility(String  visible){
-        this.visible = Boolean.parseBoolean(visible);
-    }
-    public OptionEntity updateFields(OptionDto updateOptionDto){
-        if (updateOptionDto.getKey()!= null) {
-            key = updateOptionDto.getKey();
-        }
-        if (updateOptionDto.getValue() != null) {
-            value = updateOptionDto.getValue();
-        }
-        visible = updateOptionDto.isVisible();
-
-        autoload = updateOptionDto.isAutoload();
-
-        return this;
-    }
-
 }
 

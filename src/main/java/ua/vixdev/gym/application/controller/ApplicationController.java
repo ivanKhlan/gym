@@ -1,17 +1,16 @@
 package ua.vixdev.gym.application.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ua.vixdev.gym.application.controller.dto.ApplicationDto;
+import ua.vixdev.gym.application.entity.ApplicationEntity;
 import ua.vixdev.gym.application.service.ApplicationService;
+
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * REST controller for managing applications.
@@ -21,7 +20,19 @@ import ua.vixdev.gym.application.service.ApplicationService;
 @RequiredArgsConstructor
 public class ApplicationController {
 
+  private static final Long EMPTY_ID = null;
   private final ApplicationService applicationService;
+
+  /**
+   * Retrieves an application by its ID.
+   *
+   * @param id The ID of the application to retrieve.
+   * @return The ApplicationDto representing the retrieved application.
+   */
+  @GetMapping("/{id}")
+  public ApplicationEntity findById(@PathVariable Long id) {
+    return applicationService.findById(id);
+  }
 
   /**
    * Retrieves all applications.
@@ -29,8 +40,8 @@ public class ApplicationController {
    * @return List of ApplicationDto representing all applications.
    */
   @GetMapping
-  public List<ApplicationDto> getAllApplications() {
-    return applicationService.getAllApplications();
+  public List<ApplicationEntity> findAll() {
+    return applicationService.findAll();
   }
 
   /**
@@ -40,30 +51,21 @@ public class ApplicationController {
    * @return The created ApplicationDto.
    */
   @PostMapping
-  public ApplicationDto createApplication(@RequestBody ApplicationDto applicationDto) {
-    return applicationService.createApplication(applicationDto);
-  }
-
-  /**
-   * Retrieves an application by its ID.
-   *
-   * @param id The ID of the application to retrieve.
-   * @return The ApplicationDto representing the retrieved application.
-   */
-  @GetMapping("/{id}")
-  public ApplicationDto getApplicationById(@PathVariable int id) {
-    return applicationService.getApplicationById(id);
+  @ResponseStatus(CREATED)
+  public ApplicationEntity createApplication(@RequestBody @Valid ApplicationDto applicationDto) {
+    return applicationService.createApplication(mapToApplication(EMPTY_ID, applicationDto));
   }
 
   /**
    * Updates an existing application.
    *
-   * @param updatedApplicationDto The updated ApplicationDto.
+   * @param applicationDto The updated ApplicationDto.
    * @return The updated ApplicationDto.
    */
-  @PutMapping
-  public ApplicationDto updateApplication(@RequestBody ApplicationDto updatedApplicationDto) {
-    return applicationService.updateApplication(updatedApplicationDto);
+  @PutMapping("{id}")
+  @ResponseStatus(ACCEPTED)
+  public ApplicationEntity updateApplication(Long id, @RequestBody @Valid ApplicationDto applicationDto) {
+    return applicationService.updateApplication(mapToApplication(id, applicationDto));
   }
 
   /**
@@ -72,7 +74,25 @@ public class ApplicationController {
    * @param id The ID of the application to delete.
    */
   @DeleteMapping("/{id}")
-  public ApplicationDto deleteApplication(@PathVariable int id) {
-    return applicationService.deleteApplication(id);
+  @ResponseStatus(NO_CONTENT)
+  public void deleteById(Long id) {
+    applicationService.deleteById(id);
+  }
+
+  private ApplicationEntity mapToApplication(Long id, ApplicationDto applicationDto) {
+    return ApplicationEntity.builder()
+            .id(id)
+            .backEndVersion(applicationDto.getBackEndVersion())
+            .frontEndVersion(applicationDto.getFrontEndVersion())
+            .name(applicationDto.getName())
+            .image(applicationDto.getImage())
+            .description(applicationDto.getDescription())
+            .key(applicationDto.getKey())
+            .text(applicationDto.getText())
+            .licenseType(applicationDto.getLicenseType())
+            .typeId(applicationDto.getTypeId())
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .build();
   }
 }

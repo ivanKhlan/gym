@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.vixdev.gym.option.entity.OptionDtoData;
 import ua.vixdev.gym.options.controller.OptionController;
 import ua.vixdev.gym.options.dto.OptionDto;
-import ua.vixdev.gym.options.service.OptionService;
+
 import java.util.HashMap;
 import java.util.Map;
 

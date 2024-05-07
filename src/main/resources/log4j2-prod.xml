@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" monitorInterval="30">
+<Configuration statusEntity="WARN" monitorInterval="30">
     <Properties>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n</Property>
         <Property name="APP_LOG_ROOT">./logs</Property>
@@ -7,8 +7,8 @@
 
     <Appenders>
         <RollingFile name="appLog"
-                     fileName="${APP_LOG_ROOT}/application.log"
-                     filePattern="${APP_LOG_ROOT}/application-%d{yyyy-MM-dd}-%i.log">
+                     fileName="${APP_LOG_ROOT}/applicationEntity.log"
+                     filePattern="${APP_LOG_ROOT}/applicationEntity-%d{yyyy-MM-dd}-%i.log">
             <PatternLayout pattern="${LOG_PATTERN}" />
             <Policies>
                 <SizeBasedTriggeringPolicy size="10MB" />

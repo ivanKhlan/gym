@@ -1,19 +1,15 @@
 package ua.vixdev.gym.category.controller;
 
-import ua.vixdev.gym.commons.utils.CategoryValidationHelper;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.vixdev.gym.category.controller.dto.RequestCategoryDto;
-import ua.vixdev.gym.category.controller.dto.ResponseCategoryDto;
+import ua.vixdev.gym.category.controller.dto.CategoryDto;
 import ua.vixdev.gym.category.entity.CategoryEntity;
-import ua.vixdev.gym.category.controller.dto.ResponseCategoryDtoFactory;
 import ua.vixdev.gym.category.service.CategoryService;
 
-import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 /**
 *    Rest controller for managing category
@@ -22,12 +18,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-@Log4j2
 public class CategoryController {
 
+    private static final Long EMPTY_ID = null;
     private final CategoryService categoryService;
-    private final CategoryValidationHelper categoryValidationHelper;
-    private final ResponseCategoryDtoFactory categoryDtoFactory;
 
     /**
      * Retrieves all categories
@@ -35,15 +29,8 @@ public class CategoryController {
      * @return Lit of existed categories
      */
     @GetMapping
-    public ResponseEntity<List<ResponseCategoryDto>> getAllCategoryEntities() {
-        List<CategoryEntity> categoryEntities = categoryService.findAllCategoryEntities();
-
-        List<ResponseCategoryDto> responseCategoryDtoFactories = categoryEntities
-                .stream()
-                .map(categoryDtoFactory::makeResponseCategoryDto)
-                .toList();
-
-        return ResponseEntity.ok(responseCategoryDtoFactories);
+    public List<CategoryEntity> findAll() {
+        return categoryService.findAll();
     }
 
     /**
@@ -52,87 +39,48 @@ public class CategoryController {
      * @return existed category
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseCategoryDto> getCategoryById(@PathVariable Long id) {
-        Optional<CategoryEntity> categoryEntityById = categoryService.findCategoryEntityById(id);
-
-        categoryValidationHelper.checkExistenceOfCategoryOption(categoryEntityById, id);
-
-        ResponseCategoryDto response = categoryDtoFactory.makeResponseCategoryDto(categoryEntityById.get());
-
-        return ResponseEntity.ok(response);
+    public CategoryEntity findById(@PathVariable Long id) {
+        return categoryService.findById(id);
     }
 
     /**
      *
-     * @param requestCategoryDto awaits RequestCategoryDto to be created
+     * @param categoryDto awaits RequestCategoryDto to be created
      * @return String of confirmation
      */
     @PostMapping
-    public ResponseEntity<String> createCategory(@RequestBody RequestCategoryDto requestCategoryDto) {
-
-        categoryValidationHelper.checkCategoryValueLength(requestCategoryDto);
-
-        CategoryEntity categoryEntity = categoryService.saveCategoryEntity(
-                new CategoryEntity(
-                        requestCategoryDto.getValue(),
-                        requestCategoryDto.getVisible(),
-                        requestCategoryDto.getCreatedAt(),
-                        requestCategoryDto.getUpdatedAt(),
-                        requestCategoryDto.getDeletedAt()
-                )
-        );
-
-        log.info("category with id: %d was create".formatted(categoryEntity.getId()));
-        return ResponseEntity.ok("category with id: %d was created".formatted(categoryEntity.getId()));
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public CategoryEntity createCategory(@RequestBody @Valid CategoryDto categoryDto) {
+        return categoryService.createCategory(mapToCategory(EMPTY_ID, categoryDto));
     }
 
     /**
      *
      * @param id Represents id of category to be changed
-     * @param requestCategoryDto Represents updated category
+     * @param categoryDto Represents updated category
      * @return String of confirmation
      */
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateCategoryEntity(@PathVariable Long id, @RequestBody RequestCategoryDto requestCategoryDto) {
-        Optional<CategoryEntity> categoryEntityById = categoryService.findCategoryEntityById(id);
-
-        categoryValidationHelper.checkExistenceOfCategoryOption(categoryEntityById, id);
-
-        if (requestCategoryDto.getCreatedAt() == null) {
-            requestCategoryDto.setCreatedAt(categoryEntityById.get().getCreatedAt());
-        }
-
-        CategoryEntity updatedCategoryEntity = new CategoryEntity(
-                id,
-                requestCategoryDto.getValue(),
-                requestCategoryDto.getVisible(),
-                requestCategoryDto.getCreatedAt(),
-                Instant.now(),
-                requestCategoryDto.getDeletedAt()
-        );
-
-        categoryService.saveCategoryEntity(updatedCategoryEntity);
-
-        return ResponseEntity.ok("category with id: %d was successfully updated".formatted(id));
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public CategoryEntity updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryDto categoryDto) {
+        return categoryService.updateCategory(mapToCategory(id, categoryDto));
     }
 
     /**
      *
      * @param id Represents id of category to be deleted
-     * @return String of confirmation
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCategoryEntityById(@PathVariable Long id) {
-        Optional<CategoryEntity> categoryEntityById = categoryService.findCategoryEntityById(id);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable Long id) {
+        categoryService.deleteById(id);
+    }
 
-        categoryValidationHelper.checkExistenceOfCategoryOption(categoryEntityById, id);
-
-        CategoryEntity existedCategoryEntity = categoryEntityById.get();
-        existedCategoryEntity.setDeletedAt(Instant.now());
-        existedCategoryEntity.setVisible(false);
-
-        categoryService.saveCategoryEntity(existedCategoryEntity);
-
-        return ResponseEntity.ok("category with id: %d was successfully deleted".formatted(id));
+    private CategoryEntity mapToCategory(Long id, CategoryDto categoryDto) {
+            return CategoryEntity.builder()
+                    .id(id)
+                    .value(categoryDto.getValue())
+                    .visible(categoryDto.getVisible())
+                    .build();
     }
 }

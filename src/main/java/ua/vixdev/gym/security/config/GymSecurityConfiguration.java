@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import ua.vixdev.gym.security.config.AdminConfig;
 import ua.vixdev.gym.security.filter.JwtAuthorizationFilter;
 
 /**
@@ -25,7 +24,6 @@ import ua.vixdev.gym.security.filter.JwtAuthorizationFilter;
  */
 @Configuration
 @EnableWebSecurity
-@EnableConfigurationProperties(AdminConfig.class)
 @EnableMethodSecurity(securedEnabled = true)
 public class GymSecurityConfiguration {
 

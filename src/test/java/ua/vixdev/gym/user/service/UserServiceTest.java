@@ -6,9 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import ua.vixdev.gym.user.controller.dto.CreateUserDto;
-import ua.vixdev.gym.user.controller.dto.GetUserDto;
-import ua.vixdev.gym.user.controller.dto.UpdateUserDto;
+import ua.vixdev.gym.user.controller.dto.UserDto;
 import ua.vixdev.gym.user.data.UserDataTest;
 import ua.vixdev.gym.user.entity.UserEntity;
 import ua.vixdev.gym.user.exceptions.UserNotFoundException;
@@ -37,7 +35,7 @@ class UserServiceTest {
     PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private UserServiceImpl userService;
+    private UserService userService;
 
     //list user
     @Test
@@ -87,15 +85,15 @@ class UserServiceTest {
     void when_save_user_should_return_user() {
 
         //given
-        CreateUserDto createUserDto = UserDataTest.getCreateUserDto();
+        UserDto userDto = UserDataTest.getCreateUserDto();
         UserEntity userEntity = UserDataTest.getUserEntity();
 
         //when
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
-        GetUserDto created = userService.createNewUser(createUserDto);
+        GetUserDto created = userService.createUser(userDto);
 
         //then
-        assertThat(created.getFirstName()).isSameAs(createUserDto.getFirstName());
+        assertThat(created.getFirstName()).isSameAs(userDto.getFirstName());
     }
 
     //update user

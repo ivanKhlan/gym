@@ -11,7 +11,7 @@ import ua.vixdev.gym.options.dto.OptionDto;
 import ua.vixdev.gym.options.entity.OptionEntity;
 import ua.vixdev.gym.options.exceptions.OptionNotFoundException;
 import ua.vixdev.gym.options.repository.OptionsRepository;
-import ua.vixdev.gym.options.service.OptionServiceImpl;
+import ua.vixdev.gym.options.service.OptionService;
 import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +28,7 @@ public class OptionServiceTest {
     OptionsRepository optionsRepository;
 
     @InjectMocks
-    OptionServiceImpl optionService;
+    OptionService optionService;
 
     //list status
     @Test

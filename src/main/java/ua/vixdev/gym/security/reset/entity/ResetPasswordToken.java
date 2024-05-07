@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import ua.vixdev.gym.user.entity.UserEntity;
 
 import java.time.LocalDateTime;
-@Table(name = "reset_password_tokens")
+@Table(name = "tokens")
 @Entity
 @Component
 @NoArgsConstructor

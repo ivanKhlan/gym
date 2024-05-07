@@ -41,7 +41,7 @@ class ResetTokenServiceTest {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(1L);
         userEntity.setEmail(email);
-        when(userRepository.findByEmailAddress(email)).thenReturn(Optional.of(userEntity));
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(userEntity));
 
         ResetPasswordToken resetPasswordToken = resetTokenService.generateToken(email);
 

@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ua.vixdev.gym.user.controller.dto.RoleDto;
+import ua.vixdev.gym.user.controller.dto.UserRoleDto;
 import ua.vixdev.gym.user.service.UserRoleService;
 import ua.vixdev.gym.user.controller.UserRoleController;
 
@@ -33,10 +33,10 @@ class UserRoleControllerTest {
     @Test
     void testGetAllRoles() {
         // Arrange
-        List<RoleDto> mockRoles = Collections.singletonList(new RoleDto());
+        List<UserRoleDto> mockRoles = Collections.singletonList(new UserRoleDto());
         when(userRoleService.getAllRoles()).thenReturn(mockRoles);
         // Act
-        ResponseEntity<List<RoleDto>> response = userRoleController.getAllRoles();
+        ResponseEntity<List<UserRoleDto>> response = userRoleController.findAllRoles();
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(mockRoles, response.getBody());
@@ -46,10 +46,10 @@ class UserRoleControllerTest {
     void testFindRoleById_ExistingId() {
         // Arrange
         Long id = 1L;
-        RoleDto mockRole = new RoleDto();
-        when(userRoleService.getRoleById(id)).thenReturn(mockRole);
+        UserRoleDto mockRole = new UserRoleDto();
+        when(userRoleService.findRoleById(id)).thenReturn(mockRole);
         // Act
-        ResponseEntity<RoleDto> response = userRoleController.findRoleById(id);
+        ResponseEntity<UserRoleDto> response = userRoleController.findRoleById(id);
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(mockRole, response.getBody());
@@ -59,9 +59,9 @@ class UserRoleControllerTest {
     void testFindRoleById_NonExistingId() {
         // Arrange
         Long id = 1L;
-        when(userRoleService.getRoleById(id)).thenReturn(null);
+        when(userRoleService.findRoleById(id)).thenReturn(null);
         // Act
-        ResponseEntity<RoleDto> response = userRoleController.findRoleById(id);
+        ResponseEntity<UserRoleDto> response = userRoleController.findRoleById(id);
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
@@ -70,34 +70,34 @@ class UserRoleControllerTest {
     void testUpdateRoles() {
         // Arrange
         Long id = 1L;
-        RoleDto roleDto = new RoleDto();
-        when(userRoleService.updateRole(id, roleDto)).thenReturn(roleDto);
+        UserRoleDto userRoleDto = new UserRoleDto();
+        when(userRoleService.updateRole(id, userRoleDto)).thenReturn(userRoleDto);
         // Act
-        ResponseEntity<RoleDto> response = userRoleController.updateRoles(id, roleDto);
+        ResponseEntity<UserRoleDto> response = userRoleController.updateRoles(id, userRoleDto);
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(roleDto, response.getBody());
+        assertEquals(userRoleDto, response.getBody());
     }
 
     @Test
     void testCreateRoles() {
         // Arrange
-        RoleDto roleDto = new RoleDto();
-        when(userRoleService.createRole(roleDto)).thenReturn(roleDto);
+        UserRoleDto userRoleDto = new UserRoleDto();
+        when(userRoleService.createRole(userRoleDto)).thenReturn(userRoleDto);
         // Act
-        ResponseEntity<RoleDto> response = userRoleController.createRoles(roleDto);
+        ResponseEntity<UserRoleDto> response = userRoleController.createRoles(userRoleDto);
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(roleDto, response.getBody());
+        assertEquals(userRoleDto, response.getBody());
     }
 
     @Test
     void testCreateRoles_InternalServerError() {
         // Arrange
-        RoleDto roleDto = new RoleDto();
-        when(userRoleService.createRole(roleDto)).thenReturn(null);
+        UserRoleDto userRoleDto = new UserRoleDto();
+        when(userRoleService.createRole(userRoleDto)).thenReturn(null);
         // Act
-        ResponseEntity<RoleDto> response = userRoleController.createRoles(roleDto);
+        ResponseEntity<UserRoleDto> response = userRoleController.createRoles(userRoleDto);
         // Assert
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }

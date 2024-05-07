@@ -14,12 +14,14 @@ import ua.vixdev.gym.security.controller.dto.JwtTokenDto;
 import ua.vixdev.gym.security.controller.dto.LoginUserDto;
 import ua.vixdev.gym.security.controller.dto.RegisterUserDto;
 import ua.vixdev.gym.security.model.UserEntityDetails;
-import ua.vixdev.gym.security.model.UserRole;
 import ua.vixdev.gym.user.entity.UserEntity;
+import ua.vixdev.gym.user.entity.UserRoleEntity;
 import ua.vixdev.gym.user.exceptions.UserAlreadyExistsException;
 import ua.vixdev.gym.user.repository.UserRepository;
+import ua.vixdev.gym.user.repository.UserRoleRepository;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -33,17 +35,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final UserRoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final long expirationTime;
     private final String secret;
 
     public AuthenticationServiceImpl(AuthenticationManager authenticationManager,
                                      UserRepository userRepository,
-                                     PasswordEncoder passwordEncoder,
+                                     UserRoleRepository roleRepository, PasswordEncoder passwordEncoder,
                                      @Value("${jwt.expirationTime}") long expirationTime,
                                      @Value("${jwt.secret}") String secret) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.secret = secret;
         this.expirationTime = expirationTime;
@@ -58,19 +62,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public JwtTokenDto register(RegisterUserDto registerUserDto) {
         log.debug("Entering in register Method...");
-        if (userRepository.findByEmailAddress(registerUserDto.getUsername()).isPresent()) {
+        if (userRepository.findByEmail(registerUserDto.getUsername()).isPresent()) {
             log.warn("User with email: {} is already registered", registerUserDto.getUsername());
             throw new UserAlreadyExistsException(registerUserDto.getUsername());
         }
-        UserEntity savedUser = userRepository.save(new UserEntity(
-                registerUserDto.getFirstName(),
-                registerUserDto.getLastName(),
-                registerUserDto.getUsername(),
-                passwordEncoder.encode(registerUserDto.getPassword()),
-                registerUserDto.getPhoneNumber(),
-                true,
-                Set.of(UserRole.ROLE_USER)));
-        log.info("Registered user with ID: {}", savedUser.getId());
+        var roleUser = roleRepository.findByValue("ROLE_USER").orElseThrow();
+        var user = UserEntity.builder()
+                .firstName(registerUserDto.getFirstName())
+                .lastName(registerUserDto.getLastName())
+                .email(registerUserDto.getUsername())
+                .password(passwordEncoder.encode(registerUserDto.getPassword()))
+                .phoneNumber(registerUserDto.getPhoneNumber())
+                .roles(Set.of(roleUser))
+                .visible(true)
+                .build();
+        userRepository.save(user);
+        log.info("Registered user with ID: {}", user.getId());
         return new JwtTokenDto(authenticate(registerUserDto.getUsername(), registerUserDto.getPassword()));
     }
 
@@ -82,7 +89,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return Returns a token.
      */
     private String authenticate(String username, String password) {
-        UserEntity user = userRepository.findByEmailAddress(username)
+        UserEntity user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("The User: %s, is not registered!".formatted(username)));
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getId(), password)

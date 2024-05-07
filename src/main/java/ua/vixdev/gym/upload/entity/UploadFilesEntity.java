@@ -12,14 +12,13 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Builder
-@Table(name = "files", schema = "public")
+@Table(name = "files")
 @AllArgsConstructor
 @NoArgsConstructor
 public class UploadFilesEntity {
 
     @Id
-    @SequenceGenerator(name = "files_id_seq", sequenceName = "files_id_seq")
-    @GeneratedValue(generator = "files_id_seq", strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Size(max = 255, message = "File name should be less than 255 characters.")

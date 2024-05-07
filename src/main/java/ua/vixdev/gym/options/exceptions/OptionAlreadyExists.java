@@ -1,7 +1,9 @@
 package ua.vixdev.gym.options.exceptions;
 
-public class OptionAlreadyExists extends RuntimeException{
+import ua.vixdev.gym.commons.excetpion.ResourceExistsException;
+
+public class OptionAlreadyExists extends ResourceExistsException {
     public OptionAlreadyExists(String key){
-        super("Option with this key{" + key + "} already existed");
+        super("Option with KEY: %s already existed".formatted(key));
     }
 }

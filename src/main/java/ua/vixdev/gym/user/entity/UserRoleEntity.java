@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 /**
@@ -16,6 +19,7 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "roles")
+@EntityListeners(AuditingEntityListener.class)
 public class UserRoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +30,11 @@ public class UserRoleEntity {
 
     private Boolean visible;
 
+    @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -36,4 +42,7 @@ public class UserRoleEntity {
     private LocalDateTime deletedAt;
 
 
+    public boolean equalValue(String value) {
+        return this.value.equals(value);
+    }
 }

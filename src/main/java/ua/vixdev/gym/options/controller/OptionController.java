@@ -2,69 +2,60 @@ package ua.vixdev.gym.options.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ua.vixdev.gym.options.dto.OptionDto;
 import ua.vixdev.gym.options.entity.OptionEntity;
-import ua.vixdev.gym.options.exceptions.OptionVisibleException;
 import ua.vixdev.gym.options.service.OptionService;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Map;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 @RequestMapping(value = "/options")
 public class OptionController {
+
+    private static final Long EMPTY_ID = null;
     private final OptionService optionService;
 
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(OK)
     @GetMapping()
-    List<OptionEntity> getAllOptions(){
+    List<OptionEntity> findAllOptions() {
         return optionService.findAllOptions();
     }
-    @ResponseStatus(HttpStatus.OK)
+
+    @ResponseStatus(OK)
     @GetMapping("/{id}")
-    OptionEntity findUserById(@PathVariable Long id) {
+    OptionEntity findOptionsById(@PathVariable Long id) {
         return optionService.findOptionById(id);
     }
 
     @PostMapping()
-    ResponseEntity<?> createOption(@RequestBody @Valid OptionDto optionDto) {
-        var option = optionService.createOption(optionDto);
-        return new ResponseEntity<>(option, HttpStatus.CREATED);
+    @ResponseStatus(CREATED)
+    OptionEntity createOption(@RequestBody @Valid OptionDto optionDto) {
+        return optionService.createOption(mapToOption(EMPTY_ID, optionDto));
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<?> updateOption(@PathVariable Long id, @RequestBody @Valid OptionDto optionDto) {
-        var option = optionService.updateOption(id, optionDto);
-        return new ResponseEntity<>(option, HttpStatus.ACCEPTED);
-    }
-
-    @PatchMapping("/{id}/visible")
-    ResponseEntity<?> updateOptionVisibility(@PathVariable Long id,
-                                           @RequestBody Map<String, String> body) {
-
-        var visible = body.get("visible");
-        if ((StringUtils.equalsIgnoreCase(visible, "true") ||
-                StringUtils.equalsIgnoreCase(visible, "false"))) {
-            visible = visible.toLowerCase();
-            optionService.updateOptionVisibility(id, visible);
-            return ResponseEntity.accepted().build();
-        }
-        log.error("Incorrect data was provided when update the option's visibility: {}!", visible);
-        throw new OptionVisibleException(visible);
+    @ResponseStatus(ACCEPTED)
+    OptionEntity updateOption(@PathVariable Long id, @RequestBody @Valid OptionDto optionDto) {
+        return optionService.updateOption(mapToOption(id, optionDto));
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<?> deleteOption(@PathVariable Long id) {
+    @ResponseStatus(NO_CONTENT)
+    void deleteOption(@PathVariable Long id) {
         optionService.deleteOptionById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
+    private OptionEntity mapToOption(Long id, OptionDto optionDto) {
+        return OptionEntity.builder()
+                .id(id)
+                .value(optionDto.getValue())
+                .key(optionDto.getKey())
+                .autoload(optionDto.isAutoload())
+                .visible(optionDto.isVisible())
+                .build();
+    }
 }

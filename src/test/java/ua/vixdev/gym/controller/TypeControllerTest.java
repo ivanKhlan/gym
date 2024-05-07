@@ -9,13 +9,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.vixdev.gym.category.controller.TypeController;
-import ua.vixdev.gym.category.controller.dto.RequestTypeDto;
-import ua.vixdev.gym.category.entity.TypeEntity;
-import ua.vixdev.gym.exception.TypeValueTooLong;
-import ua.vixdev.gym.category.controller.dto.ResponseTypeDtoFactory;
-import ua.vixdev.gym.category.service.TypeService;
-import ua.vixdev.gym.commons.utils.TypeValidationHelper;
+import ua.vixdev.gym.application.controller.TypeController;
+import ua.vixdev.gym.application.controller.dto.TypeDto;
+import ua.vixdev.gym.application.entity.TypeEntity;
+import ua.vixdev.gym.application.service.TypeService;
 
 import java.time.Instant;
 import java.util.List;
@@ -47,7 +44,7 @@ class TypeControllerTest {
 
     private TypeEntity typeEntity;
 
-    private RequestTypeDto requestTypeDto;
+    private TypeDto typeDto;
 
     private Long typeId;
 
@@ -57,7 +54,7 @@ class TypeControllerTest {
     void setUp() {
         this.typeId = 1L;
         this.typeEntity = new TypeEntity(typeId, "test", true, Instant.now(), Instant.now(), null);
-        this.requestTypeDto = new RequestTypeDto("test", true, Instant.now(), Instant.now(), null);
+        this.typeDto = new TypeDto("test", true, Instant.now(), Instant.now(), null);
 
         MockitoAnnotations.openMocks(this);
     }
@@ -67,7 +64,7 @@ class TypeControllerTest {
     public void getAllTypes_Success() throws Exception {
         List<TypeEntity> typeEntities = List.of(typeEntity, typeEntity, typeEntity);
 
-        when(typeService.getAllTypes()).thenReturn(typeEntities);
+        when(typeService.findAll()).thenReturn(typeEntities);
 
         mockMvc.perform(get(URL_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,7 +76,7 @@ class TypeControllerTest {
     // get type by its id
     @Test
     public void getTypeById_Success() throws Exception {
-        when(typeService.getTypeById(1L)).thenReturn(Optional.of(typeEntity));
+        when(typeService.updateType(1L)).thenReturn(Optional.of(typeEntity));
 
         mockMvc.perform(get(URL_PATH + typeId + "/")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -92,11 +89,11 @@ class TypeControllerTest {
     // create type by given data
     @Test
     public void createTypeByGivenData_Success() throws Exception {
-        when(typeService.saveTypeEntity(any(TypeEntity.class))).thenReturn(typeEntity);
+        when(typeService.createType(any(TypeEntity.class))).thenReturn(typeEntity);
 
         mockMvc.perform(post(URL_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestTypeDto)))
+                        .content(objectMapper.writeValueAsString(typeDto)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("type with id: 1 was created"));
     }
@@ -105,14 +102,14 @@ class TypeControllerTest {
     @Test
     public void createTypeByGivenData_ValueTooLong() throws Exception {
         String longDescription = "a".repeat(71);
-        RequestTypeDto requestTypeDto = new RequestTypeDto(longDescription, true, Instant.now(), Instant.now(), null);
+        TypeDto typeDto = new TypeDto(longDescription, true, Instant.now(), Instant.now(), null);
 
         doThrow(new TypeValueTooLong("length of type value is too long"))
-                .when(typeValidationHelper).checkTypeValueLength(requestTypeDto);
+                .when(typeValidationHelper).checkTypeValueLength(typeDto);
 
         mockMvc.perform(post(URL_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestTypeDto)))
+                        .content(objectMapper.writeValueAsString(typeDto)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -120,12 +117,12 @@ class TypeControllerTest {
     @Test
     public void alterTypeEntity() throws Exception {
 
-        when(typeService.getTypeById(typeId)).thenReturn(Optional.of(typeEntity));
-        when(typeService.saveTypeEntity(any(TypeEntity.class))).thenReturn(typeEntity);
+        when(typeService.updateType(typeId)).thenReturn(Optional.of(typeEntity));
+        when(typeService.createType(any(TypeEntity.class))).thenReturn(typeEntity);
 
         mockMvc.perform(put(URL_PATH + "{id}/", typeId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestTypeDto)))
+                        .content(objectMapper.writeValueAsString(typeDto)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("type entity with id: 1 was altered"));
     }
@@ -134,9 +131,9 @@ class TypeControllerTest {
     @Test
     public void deleteTypeEntity() throws Exception {
 
-        when(typeService.getTypeById(typeId)).thenReturn(Optional.of(typeEntity));
+        when(typeService.updateType(typeId)).thenReturn(Optional.of(typeEntity));
 
-        doNothing().when(typeService).deleteTypeById(typeId);
+        doNothing().when(typeService).deleteById(typeId);
 
         mockMvc.perform(delete(URL_PATH + "{id}/", typeId))
                 .andExpect(status().isOk())

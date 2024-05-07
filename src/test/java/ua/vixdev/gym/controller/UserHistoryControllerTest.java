@@ -9,7 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.vixdev.gym.user.controller.dto.UserHistoryRequest;
+import ua.vixdev.gym.user.controller.dto.UserHistoryDto;
 import ua.vixdev.gym.user.controller.UserHistoryController;
 import ua.vixdev.gym.user.entity.UserHistoryEntity;
 import ua.vixdev.gym.user.mapper.UserHistoryMapper;
@@ -55,7 +55,7 @@ class UserHistoryControllerTest {
     public void testGetAllHistoryChanges_ReturnsHistoryChangesList() throws Exception {
         List<UserHistoryEntity> userHistoryEntityList = List.of(userHistoryEntity, userHistoryEntity);
 
-        when(userHistoryService.getAllHistoryChanges()).thenReturn(userHistoryEntityList);
+        when(userHistoryService.findAll()).thenReturn(userHistoryEntityList);
 
         this.mockMvc.perform(get(END_POINT)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,7 +67,7 @@ class UserHistoryControllerTest {
 
     @Test
     public void testGetHistoryChangeById_ReturnsHistoryChange() throws Exception {
-        when(userHistoryService.getHistoryChangesEntityById(1L)).thenReturn(userHistoryEntity);
+        when(userHistoryService.findById(1L)).thenReturn(userHistoryEntity);
 
         this.mockMvc.perform(get(END_POINT + 1)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,7 +79,7 @@ class UserHistoryControllerTest {
 
     @Test
     public void testCreateHistoryChange_ReturnsCreatedHistoryChange() throws Exception {
-        when(userHistoryService.createHistoryChange(new UserHistoryRequest(1, "test"))).thenReturn(userHistoryEntity);
+        when(userHistoryService.createUserHistory(new UserHistoryDto(1, "test"))).thenReturn(userHistoryEntity);
 
         this.mockMvc.perform(post(END_POINT)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -92,10 +92,10 @@ class UserHistoryControllerTest {
     @Test
     public void testUpdateHistoryChangeDto_ReturnsUpdatedHistoryChange() throws Exception {
         Long id = 1L;
-        UserHistoryRequest requestDto = new UserHistoryRequest(1, "updatedText");
+        UserHistoryDto requestDto = new UserHistoryDto(1, "updatedText");
         UserHistoryEntity updatedEntity = new UserHistoryEntity(id, 1, "updatedText", LocalDateTime.now());
 
-        when(userHistoryService.updateHistoryChange(id, requestDto)).thenReturn(updatedEntity);
+        when(userHistoryService.updateUserHistory(id, requestDto)).thenReturn(updatedEntity);
 
         mockMvc.perform(put(END_POINT + id)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -109,7 +109,7 @@ class UserHistoryControllerTest {
     public void testDeleteHistoryChangeById_ReturnsString() throws Exception {
         Long id = 1L;
 
-        doNothing().when(userHistoryService).deleteHistoryChangeById(id);
+        doNothing().when(userHistoryService).deleteById(id);
 
         this.mockMvc.perform(delete(END_POINT + id))
                 .andExpectAll(

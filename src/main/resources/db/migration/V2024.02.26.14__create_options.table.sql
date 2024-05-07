@@ -1,4 +1,4 @@
-CREATE TABLE optionEntity
+CREATE TABLE options
 (
     id         SERIAL PRIMARY KEY,
     autoload   BOOLEAN   DEFAULT true,

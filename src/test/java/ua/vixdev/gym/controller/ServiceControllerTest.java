@@ -37,9 +37,9 @@ class ServiceControllerTest {
     @Test
     void testGetAllServices() {
         // Arrange
-        when(servicesService.getAllService()).thenReturn(Collections.singletonList(testServiceDto));
+        when(servicesService.findAll()).thenReturn(Collections.singletonList(testServiceDto));
         // Act
-        ResponseEntity<List<ServiceDto>> response = serviceController.getAllServices();
+        ResponseEntity<List<ServiceDto>> response = serviceController.findAll();
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, response.getBody().size());
@@ -50,9 +50,9 @@ class ServiceControllerTest {
     void testFindServiceById() {
         // Arrange
         long id = 1L;
-        when(servicesService.getServiceById(id)).thenReturn(testServiceDto);
+        when(servicesService.findById(id)).thenReturn(testServiceDto);
         // Act
-        ResponseEntity<ServiceDto> response = serviceController.findServiceById(id);
+        ResponseEntity<ServiceDto> response = serviceController.findById(id);
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Test Service", response.getBody().getTitle());
@@ -84,9 +84,9 @@ class ServiceControllerTest {
     @Test
     void testDeleteService() {
         // Act
-        ResponseEntity<?> response = serviceController.deleteService(1L);
+        ResponseEntity<?> response = serviceController.deleteById(1L);
         // Assert
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(servicesService, times(1)).deleteService(1L);
+        verify(servicesService, times(1)).deleteById(1L);
     }
 }

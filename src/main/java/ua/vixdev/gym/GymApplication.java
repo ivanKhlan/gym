@@ -10,7 +10,6 @@ import org.springframework.cache.annotation.EnableCaching;
  * @since 2024-02-21
  */
 @SpringBootApplication
-@EnableCaching
 public class GymApplication {
 
     public static void main(String[] args) {

@@ -1,13 +1,11 @@
 package ua.vixdev.gym.user.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.vixdev.gym.user.controller.dto.RoleDto;
-import ua.vixdev.gym.exception.RoleIsEmptyException;
-import ua.vixdev.gym.exception.RoleNotFoundException;
-import ua.vixdev.gym.user.mapper.UserRoleMapper;
+import ua.vixdev.gym.user.entity.UserRoleEntity;
+import ua.vixdev.gym.user.exceptions.RoleAlreadyExists;
+import ua.vixdev.gym.user.exceptions.RoleNotFoundException;
 import ua.vixdev.gym.user.repository.UserRoleRepository;
-import ua.vixdev.gym.commons.utils.RoleValidator;
 
 import java.util.List;
 
@@ -15,99 +13,46 @@ import java.util.List;
  * Service class responsible for managing role-related operations.
  */
 @Service
+@RequiredArgsConstructor
 public class UserRoleService {
 
     private final UserRoleRepository userRoleRepository;
 
-    private final UserRoleMapper userRoleMapper;
 
-    @Autowired
-    public UserRoleService(UserRoleRepository userRoleRepository, UserRoleMapper userRoleMapper) {
-        this.userRoleRepository = userRoleRepository;
-        this.userRoleMapper = userRoleMapper;
+    public List<UserRoleEntity> getAllRoles() {
+        return userRoleRepository.findAll();
     }
 
-    /**
-     * Retrieves all roles.
-     *
-     * @return List of RoleDto objects representing all roles.
-     */
-    public List<RoleDto> getAllRoles(){
-        return userRoleRepository.findAll()
-                .stream()
-                .map(userRoleMapper::roleToDto)
-                .toList();
-    }
-
-    /**
-     * Retrieves a role by its ID.
-     *
-     * @param id The ID of the role to retrieve.
-     * @return The RoleDto object representing the retrieved role.
-     * @throws RoleNotFoundException if the role with the specified ID is not found.
-     */
-    public RoleDto getRoleById(Long id){
+    public UserRoleEntity findRoleById(Long id) {
         return userRoleRepository.findById(id)
-                .map(userRoleMapper::roleToDto)
-                .orElseThrow(RoleNotFoundException::new);
+                .orElseThrow(() -> new RoleNotFoundException(id));
     }
 
-    /**
-     * Deletes a role by its ID.
-     *
-     * @param id The ID of the role to delete.
-     * @throws RoleNotFoundException if the role with the specified ID is not found.
-     */
-    public void deleteRole(Long id){
-        var role = userRoleRepository
-                .findById(id)
-                .orElseThrow(RoleNotFoundException::new);
-
-        role = userRoleMapper.softDeleted(role);
-
-        userRoleRepository.save(role);
+    public UserRoleEntity createRole(UserRoleEntity role) {
+        validateRoleValueExists(role.getValue());
+        return userRoleRepository.save(role);
     }
 
-    /**
-     * Creates a new role.
-     *
-     * @param roleDto The RoleDto object containing the information of the role to be created.
-     * @return The RoleDto object representing the created role.
-     * @throws RoleIsEmptyException if the provided RoleDto is null.
-     */
-    public RoleDto createRole(RoleDto roleDto){
-        if(roleDto == null){
-            throw new RoleIsEmptyException();
+    public UserRoleEntity updateRole(UserRoleEntity role) {
+        return userRoleRepository.findById(role.getId())
+                .map(loadCustomer -> {
+                    validateRoleValueExists(loadCustomer, role);
+                    return userRoleRepository.save(role);
+                }).orElseThrow(() -> new RoleNotFoundException(role.getId()));
+    }
+
+    public void deleteRole(Long id) {
+        userRoleRepository.deleteById(id);
+    }
+
+    private void validateRoleValueExists(String value) {
+        if (userRoleRepository.existsByValue(value)) {
+            throw new RoleAlreadyExists(value);
         }
-
-        var role = userRoleMapper.dtoToRole(roleDto);
-
-        RoleValidator.roleValidate(role);
-
-        role = userRoleRepository.save(role);
-
-        return userRoleMapper.roleToDto(role);
     }
-
-    /**
-     * Updates a role by its ID.
-     *
-     * @param id The ID of the role to update.
-     * @param roleDto The RoleDto object containing the updated role information.
-     * @return The RoleDto object representing the updated role.
-     * @throws RoleNotFoundException if the role with the specified ID is not found.
-     */
-    public RoleDto updateRole(Long id, RoleDto roleDto){
-        var oldRole = userRoleRepository
-                .findById(id)
-                .orElseThrow(RoleNotFoundException::new);
-
-        var updatedRole = userRoleMapper.updateService(oldRole,roleDto);
-
-        updatedRole.setId(id);
-
-        updatedRole =  userRoleRepository.save(updatedRole);
-
-        return userRoleMapper.roleToDto(updatedRole);
+    private void validateRoleValueExists(UserRoleEntity loadRole, UserRoleEntity role) {
+        if (userRoleRepository.existsByValue(role.getValue()) && !loadRole.equalValue(role.getValue())) {
+            throw new RoleAlreadyExists(role.getValue());
+        }
     }
 }

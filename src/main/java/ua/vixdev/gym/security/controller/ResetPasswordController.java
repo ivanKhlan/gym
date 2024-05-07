@@ -29,7 +29,6 @@ public class ResetPasswordController {
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @ResponseStatus(HttpStatus.ACCEPTED)
     @PatchMapping("/{id}/changePassword")
-    @CacheEvict(cacheNames = {"users"}, key = "#id")
     public void changePassword(@PathVariable Long id,
                                @RequestBody @Valid ChangePasswordDto changePassword,
                                @AuthenticationPrincipal Long principalId) {

@@ -1,10 +1,8 @@
 package ua.vixdev.gym.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ehcache.CacheManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -14,16 +12,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ua.vixdev.gym.security.model.UserSecurity;
-import ua.vixdev.gym.user.controller.dto.CreateUserDto;
-import ua.vixdev.gym.user.controller.dto.UpdateUserDto;
+import ua.vixdev.gym.user.controller.dto.UserDto;
 import ua.vixdev.gym.user.data.UserDataTest;
-import ua.vixdev.gym.user.service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -127,7 +120,7 @@ class UserControllerTest {
     @Test
     void create_user_and_return_status_created() throws Exception {
         //given
-        CreateUserDto user = UserDataTest.getCreateUserDto();
+        UserDto user = UserDataTest.getCreateUserDto();
 
         //when
         //then
@@ -184,7 +177,7 @@ class UserControllerTest {
     @Test
     void deleted_user_and_return_status_no_content() throws Exception {
         //given
-        CreateUserDto user = UserDataTest.getCreateUserDto();
+        UserDto user = UserDataTest.getCreateUserDto();
 
         //when
         //then

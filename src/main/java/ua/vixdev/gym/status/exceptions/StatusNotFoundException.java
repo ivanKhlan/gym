@@ -1,7 +1,9 @@
 package ua.vixdev.gym.status.exceptions;
 
-public class StatusNotFoundException extends RuntimeException{
+import ua.vixdev.gym.commons.excetpion.ResourceNotFoundException;
+
+public class StatusNotFoundException extends ResourceNotFoundException {
     public StatusNotFoundException(Long id) {
-        super("Could not find status with id {" + id + "}!");
+        super("Status with ID: %s not found!".formatted(id));
     }
 }
